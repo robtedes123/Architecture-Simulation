@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Memory
+class memory
 {
 	// TODO
 };
