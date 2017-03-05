@@ -51,6 +51,6 @@ Memory::printHierarchy()
 {
     puts("Memory Hierarchy:");
     for (const Memory* lvl = this; lvl != nullptr; lvl = lvl->next) {
-        printf("%5s : %5d bytes : %2d cycle delay\n", lvl->name, lvl->size, lvl->delay);
+        printf("%5s : %5d bytes : %3d cycle delay\n", lvl->name, lvl->size, lvl->delay);
     }
 }
