@@ -3,7 +3,7 @@
 SRCDIR := .
 OBJDIR := .obj
 
-CXXFLAGS := 
+CXXFLAGS := --std=c++14
 LDFLAGS :=
 
 $(shell mkdir -p $(OBJDIR))
