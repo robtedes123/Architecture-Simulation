@@ -1,6 +1,6 @@
 #include "Memory.h"
 
-#include <iostream>
+#include <cstdio>
 
 Memory::Memory(initializer_list<Config> args) :
     Memory(std::queue<Config>(args), nullptr) {}
@@ -30,9 +30,27 @@ Memory::~Memory()
     }
 }
 
-void Memory::printHierarchy()
+int
+Memory::read(const int address, uint8_t* out_byte) const
 {
-    for (const Memory* level = this; level != nullptr; level = level->next) {
-        cout << level->name << " : " << level->size << " bytes : " << level->delay << " sec delay" << endl;
+    // TODO : look at next/prev level
+    *out_byte = data[address];
+    return delay;
+}
+
+int
+Memory::write(const int address, uint8_t byte)
+{
+    // TODO : look at next/prev level
+    data[address] = byte;
+    return delay;
+}
+
+void
+Memory::printHierarchy()
+{
+    puts("Memory Hierarchy:");
+    for (const Memory* lvl = this; lvl != nullptr; lvl = lvl->next) {
+        printf("%5s : %5d bytes : %2d cycle delay\n", lvl->name, lvl->size, lvl->delay);
     }
 }
