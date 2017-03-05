@@ -2,14 +2,24 @@
 
 #include "Memory.h"
 
-int main()
+#include <QApplication>
+#include <QWidget>
+
+using namespace std;
+
+int main(int argc, char** argv)
 {
     Memory memory {
-        { .NAME = "L1" , .SIZE =  32 },
-        { .NAME = "L2" , .SIZE =  64 },
-        { .NAME = "L3" , .SIZE = 128 },
-        { .NAME = "RAM", .SIZE = 256 },
+        { .name = "L1"  , .size = 0x0500, .delay = 1 },
+        { .name = "RAM" , .size = 0x1000, .delay = 2 },
     };
 
-    memory.printHierarchy();
+    QApplication app(argc, argv);
+
+    QWidget window;
+    window.resize(250,150);
+    window.setWindowTitle("Simple example");
+    window.show();
+
+    return app.exec();
 }

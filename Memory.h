@@ -4,7 +4,6 @@
 // Class representing memory operations for Architecture Simulation
 
 #include <cstdint>
-#include <iostream>
 #include <string>
 #include <queue>
 #include <initializer_list>
@@ -12,8 +11,9 @@
 using namespace std;
 
 struct Config {
-    const string NAME;
-    const int SIZE;
+    const string name;
+    const int    size;
+    const int    delay;
 };
 
 class Memory
@@ -30,6 +30,8 @@ class Memory
 
         const int size;
         uint8_t*  data;
+
+        const int delay;
 
         const Memory* prev;
         const Memory* next;

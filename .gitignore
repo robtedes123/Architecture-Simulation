@@ -1,5 +1,11 @@
-# object file directory
-.obj
+# project files
+*.pro
+
+# object files
+*.o
+
+# makefile
+Makefile
 
 # executables
-memory
+Architecture-Simulation
