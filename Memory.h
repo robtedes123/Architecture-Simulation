@@ -4,59 +4,59 @@
 // Class representing memory operations for Architecture Simulation
 
 #include <cstdint>
-#include <queue>
-#include <initializer_list>
+#include <vector>
 
 using namespace std;
-
-struct Config {
-    // Name of the memory layer (used for debugging purposes)
-    // NOTE: You have to provide a static string
-    const char* name;
-
-    // Size of the memory layer in bytes
-    const int size;
-
-    // Number cycles required to process a request
-    const int delay;
-};
 
 class Memory
 {
     public:
-        Memory(initializer_list<Config>);
-        ~Memory();
+        Memory(const int delay) : DELAY(delay) {}
 
-        // reads a byte from adddress in memory
-        // returns the number of cycles required to perform operation
-        int read(int address, uint8_t* out_byte) const;
-
-        // writes a byte to address in memory
-        // returns the number of cycles required to perform operation
-        int write(int address, uint8_t byte);
-
-        // prints out the memory structure (used for debugging purposes)
-        void printHierarchy();
-    private:
-        Memory(std::queue<Config>, const Memory*);
-
-        // Name of the memory layer (used for debugging purposes)
-        const char* name;
-
-        // Size of the memory layer in bytes
-        const int size;
+        virtual bool read(const int address, uint8_t* byte) const = 0;
+        virtual void write(const int address, const uint8_t byte) = 0;
 
         // Number cycles required to process a request
-        const int delay;
+        const int DELAY;
+};
 
+class Controller
+{
+    public:
+        Controller(const vector<Memory*> layers);
+
+        int read(const int address, uint8_t* byte) const;
+        int write(const int address, uint8_t byte);
+
+    private:
+        const vector<Memory*> layers;
+};
+
+class Cache : public Memory
+{
+    public:
+        Cache(const int delay);
+
+        virtual bool read(const int address, uint8_t* byte) const;
+        virtual void write(const int address, const uint8_t byte);
+
+    private:
+        struct Line {
+
+        };
+};
+
+class RAM : public Memory
+{
+    public:
+        RAM(const int size, const int delay);
+
+        virtual bool read(const int address, uint8_t* byte) const;
+        virtual void write(const int address, const uint8_t byte);
+
+    private:
         // Internal representation of memory
-        uint8_t* data;
-
-        // Previous level of memory
-        const Memory* prev;
-
-        // Next level of memory
-        const Memory* next;
+        vector<uint8_t> memory;
 };
 
 #endif // _MEMORY_H
