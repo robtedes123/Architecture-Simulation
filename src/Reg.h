@@ -7,9 +7,9 @@ using namespace std;
 struct Reg {
     public:
         enum class TypeInfo : uint32_t {
-            WIDTH8,
-            WIDTH16,
-            WIDTH32,
+            WIDTH8  = 0,
+            WIDTH16 = 1,
+            WIDTH32 = 2,
         };
 
         int width() const;

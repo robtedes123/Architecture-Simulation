@@ -16,8 +16,11 @@ class CPU {
 
         void execute();
     private:
+        void add(Reg& dst, Reg& op1, Reg& op2);
         void mov(Reg& dst, uint32_t imm);
         void mov(Reg& dst, Reg& src);
+        void trn(Reg& arg, Reg::TypeInfo type);
+
         void str(Reg& src, Reg& dst);
         void ldr(Reg& dst, Reg& src, Reg::TypeInfo type);
 
