@@ -1,26 +1,25 @@
-EXE := sim
+EXE := arch-sim
 
-SRCDIR := .
+SRCDIR := src
 OBJDIR := .obj
-
-CXXFLAGS := --std=c++14
-LDFLAGS :=
 
 $(shell mkdir -p $(OBJDIR))
 
-SRCS := $(shell find $(SRCDIR) -name "*.cpp")
-OBJS := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o, $(SRCS))
+SRCS := $(wildcard $(SRCDIR)/*.cpp)
+OBJS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+DEPS := $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.d)
+
+CXXFLAGS := --std=c++14
 
 all : $(EXE)
 
 $(EXE) : $(OBJS)
-	$(CXX) $(LDFLAGS) $(OBJS) -o $@
+	$(CXX) $^ -o $@
 
 clean : 
 	$(RM) -rf $(OBJDIR) $(EXE)
 
-$(OBJDIR)/Memory.o : Memory.cpp Memory.h
-$(OBJDIR)/Driver.o : Driver.cpp
+$(OBJDIR)/%.o : $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
 
-$(OBJDIR)/%.o : %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+-include $(DEPS)
