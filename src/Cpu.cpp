@@ -26,15 +26,12 @@ CPU::execute() {
     //printf("%d\n", r2.getData());
 }
 
-/******* EXECUTION *******/
+/******* EXECUTION INSTRUCTIONS *******/
 
 void
 CPU::add(Reg& dst, Reg& op1, Reg& op2) {
-    int op1_size = (int)op1.getType();
-    int op2_size = (int)op2.getType();
-    int dst_size = std::max(op1_size, op2_size);
-
-    dst.setType((Reg::TypeInfo)dst_size);
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
 
     uint32_t op1_data = op1.getData();
     uint32_t op2_data = op2.getData();
@@ -91,16 +88,7 @@ CPU::trn(Reg& arg, Reg::TypeInfo type) {
     arg.setData(data);
 }
 
-void
-CPU::str(Reg& src, Reg& dst) {
-    const uint32_t address = dst.getData();
-    const uint32_t data = src.getData();
-
-    int delay = 0;
-    for (int i = 0; i < src.width(); i++) {
-        mem.write(address+i, (data >> (8*i)) & 0xFF, &delay);
-    }
-}
+/******* LOAD/STORE INSTRUCTIONS *******/
 
 void
 CPU::ldr(Reg& dst, Reg& src, Reg::TypeInfo type) {
@@ -117,3 +105,51 @@ CPU::ldr(Reg& dst, Reg& src, Reg::TypeInfo type) {
     dst.setData(data);
 }
 
+void
+CPU::str(Reg& src, Reg& dst) {
+    const uint32_t address = dst.getData();
+    const uint32_t data = src.getData();
+
+    int delay = 0;
+    for (int i = 0; i < src.width(); i++) {
+        mem.write(address+i, (data >> (8*i)) & 0xFF, &delay);
+    }
+}
+
+/******* LOAD/STORE INSTRUCTIONS *******/
+
+// THESE ARE UNTESTED!
+void
+CPU::branch(uint32_t cond, uint32_t label) {
+    if (FLAGS.getData() & cond) {
+        uint32_t data = PC.getData() + label;
+        PC.setData(data);
+    }
+}
+
+void
+CPU::branch_indirect(uint32_t cond, Reg& arg) {
+    if (FLAGS.getData() & cond) {
+        PC.setData(arg.getData());
+    }
+}
+
+void
+CPU::branch_and_link(uint32_t label) {
+    uint32_t pc = PC.getData();
+
+    LR.setType(Reg::TypeInfo::WIDTH32);
+    LR.setData(pc + 4);
+
+    PC.setData(pc + label);
+}
+
+void
+CPU::call(Reg& arg) {
+    uint32_t pc = PC.getData();
+
+    LR.setType(Reg::TypeInfo::WIDTH32);
+    LR.setData(pc + 4);
+
+    PC.setData(pc + arg.getData());
+}

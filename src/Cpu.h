@@ -21,8 +21,13 @@ class CPU {
         void mov(Reg& dst, Reg& src);
         void trn(Reg& arg, Reg::TypeInfo type);
 
-        void str(Reg& src, Reg& dst);
         void ldr(Reg& dst, Reg& src, Reg::TypeInfo type);
+        void str(Reg& src, Reg& dst);
+
+        void branch(uint32_t cond, uint32_t label);
+        void branch_indirect(uint32_t cond, Reg& arg);
+        void branch_and_link(uint32_t label);
+        void call(Reg& arg);
 
         Memory mem;
 
