@@ -28,7 +28,7 @@ class CPU {
         void SUB(Reg& dst, Reg& op1, uint32_t imm);
         void RSUB(Reg& dst, uint32_t imm, Reg& op2);
         void CMP(Reg& arg1, Reg& arg2);
-        void CMP(Reg& arg1, uint32_t imm);
+        void CMP(Reg& arg1, int32_t imm);
         void AND(Reg& dst, Reg& op1, Reg& op2);
         void AND(Reg& dst, Reg& op1, uint32_t imm);
         void OR(Reg& dst, Reg& op1, Reg& op2);
