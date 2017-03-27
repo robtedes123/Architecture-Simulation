@@ -361,7 +361,7 @@ uint32_t Assembler::parse_line(string line)
 			word += 0b1000;
 			word = parse_cond(word, arg[1]);
 			word = word << 24;
-			word += (uint16_t) stoi(arg[2]);
+			word += stoi("-31") & 0xFFFFFF;
 			break;
 		//BI
 		case 24:
@@ -374,7 +374,7 @@ uint32_t Assembler::parse_line(string line)
 		case 25:
 			word += 0b1010;
 			word = word << 28;
-			word += (uint16_t) stoi(arg[1]);
+			word += stoi(arg[1]) & 0xFFFFFF;
 			break;
 		//CALL
 		case 26:
