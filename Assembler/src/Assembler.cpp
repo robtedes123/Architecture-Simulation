@@ -13,7 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
-	file_out_bin.open(filename_out_bin);
+	file_out_bin.open(filename_out_bin, ios::out | ios::binary);
 
 	if(file_in.is_open())
 	{
@@ -30,6 +30,8 @@ void Assembler::parse()
 			}
 			if(file_out_bin.is_open())
 			{
+
+
 			}
 			else
 			{
@@ -216,7 +218,7 @@ uint32_t Assembler::parse_line(string line)
 
 uint32_t Assembler::parse_reg(uint32_t word, string arg)
 {
-	word << 5;
+	word = word << 5;
 
 	switch(stoi(arg.substr(1, 2)))
 	{
