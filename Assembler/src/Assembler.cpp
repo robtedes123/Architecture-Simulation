@@ -348,45 +348,40 @@ uint32_t Assembler::parse_line(string line)
 			word = word << 2;
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			word = word << 16;
+			word = word << 17;
 			break;
 		//STR
 		case 22:
 			word += 0b11;
-			word = word << 3;
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
-			word = word << 18;
+			word = word << 19;
 			break;
 		//B
 		case 23:
 			word += 0b1000;
-			word = word << 4;
 			word = parse_cond(word, arg[1]);
 			// encode label
-			word = word << 27;
+			word = word << 28;
 			break;
 		//BI
 		case 24:
 			word += 0b1001;
-			word = word << 4;
 			word = parse_cond(word, arg[1]);
 			word = parse_reg(word,arg[2]);
-			word = word << 18;
+			word = word << 19;
 			break;
 		//BL
 		case 25:
 			word += 0b1010;
-			word = word << 4;
 			// encode label
-			word = word << 27;
+			word = word << 28;
 			break;
 		//CALL
 		case 26:
 			word += 0b1011;
-			word = word << 4;
 			word = parse_reg(word,arg[1]);
-			word = word << 22;
+			word = word << 23;
 			break;
 		default:
 			break;
