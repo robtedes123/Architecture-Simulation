@@ -48,6 +48,7 @@ class Assembler
 		void parse();
 	private:
 		static uint32_t parse_line(string line);
+		uint32_t parse_reg(uint32_t word, string arg);
 
 		const char* filename_in;
 		const char* filename_out;
