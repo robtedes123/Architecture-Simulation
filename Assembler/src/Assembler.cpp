@@ -334,7 +334,7 @@ uint32_t Assembler::parse_line(string line)
 		//LDR
 		case 21:
 			word += 0b1;
-			word = word << 3;
+			word = word << 1;
 
 			if(stoi(arg[1]) == 16)
 			{
@@ -362,7 +362,7 @@ uint32_t Assembler::parse_line(string line)
 			word += 0b1000;
 			word = parse_cond(word, arg[1]);
 			// encode label
-			word = word << 28;
+			word = word << 24;
 			break;
 		//BI
 		case 24:
