@@ -206,66 +206,96 @@ uint32_t Assembler::parse_line(string line)
 
 uint32_t Assembler::parse_reg(uint32_t word, string arg)
 {
+	word << 5;
 
 	switch(stoi(arg.substr(1, 2)))
 	{
 		case 1:
+			word += 0b1;
 			break;
 		case 2:
+			word += 0b10;
 			break;
 		case 3:
+			word += 0b11;
 			break;
 		case 4:
+			word += 0b100;
 			break;
 		case 5:
+			word += 0b101;
 			break;
 		case 6:
+			word += 0b110;
 			break;
 		case 7:
+			word += 0b111;
 			break;
 		case 8:
+			word += 0b1000;
 			break;
 		case 9:
+			word += 0b1001;
 			break;
 		case 10:
+			word += 0b1010;
 			break;
 		case 11:
+			word += 0b1011;
 			break;
 		case 12:
+			word += 0b1100;
 			break;
 		case 13:
+			word += 0b1101;
 			break;
 		case 14:
+			word += 0b1110;
 			break;
 		case 15:
+			word += 0b1111;
 			break;
 		case 16:
+			word += 0b10000;
 			break;
 		case 17:
+			word += 0b10001;
 			break;
 		case 18:
+			word += 0b10010;
 			break;
 		case 19:
+			word += 0b10011;
 			break;
 		case 20:
+			word += 0b10100;
 			break;
 		case 21:
+			word += 0b10101;
 			break;
 		case 22:
+			word += 0b10110;
 			break;
 		case 23:
+			word += 0b10111;
 			break;
 		case 24:
+			word += 0b11000;
 			break;
 		case 25:
+			word += 0b11001;
 			break;
 		case 26:
+			word += 0b11010;
 			break;
 		case 27:
+			word += 0b11011;
 			break;
 		default:
 			break;
 	}
+
+	return word;
 
 }
 
