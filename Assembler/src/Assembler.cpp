@@ -312,6 +312,49 @@ uint32_t Assembler::parse_reg(uint32_t word, string arg)
 
 }
 
+uint32_t parse_imm(uint32_t word, string arg, int shift)
+{
+	int temp = stoi(arg);
+	word = word << shift;
+	return word += temp;
+}
+
+uint32_t parse_cond(uint32_t word, string arg)
+{
+
+	word = word << 4;
+
+	switch(arg.at(0))
+	{
+		case 'G':
+			word += 0b1;
+			break;
+		case 'L':
+			word += 0b10;
+			break;
+		case 'E':
+			word += 0b11;
+			break;
+		case 'N':
+			word += 0b100;
+			break;
+		case 'O':
+			word += 0b101;
+			break;
+		case 'U':
+			word += 0b110;
+			break;
+		case 'C':
+			word += 0b111;
+			break;
+		case 'D':
+			word += 0b1000;
+			break;
+		default:
+			break;
+	}
+}
+
 void enumerate()
 {
 	s_mapTypeValues["ADD"] = ADD;
