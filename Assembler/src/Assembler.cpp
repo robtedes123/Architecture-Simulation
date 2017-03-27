@@ -28,16 +28,16 @@ void Assembler::parse()
 			{
 				cout << "Unable to open output file" << endl;
 			}
-			if(file_out_bin.is_open())
-			{
-
-				file_out_bin.write((char*)&bit_string, sizeof(bit_string));
-
-			}
-			else
-			{
-				cout << "Unable to open binary output file" << endl;
-			}
+			// if(file_out_bin.is_open())
+			// {
+			//
+			// 	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
+			//
+			// }
+			// else
+			// {
+			// 	cout << "Unable to open binary output file" << endl;
+			// }
 		}
 	}
 	else
@@ -70,145 +70,305 @@ uint32_t Assembler::parse_line(string line)
 
 	switch(s_mapTypeValues[arg[0]])
 	{
+		//ADD
 		case 0:
-			if(!(arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
+			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
+			{
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
+			}
+			else
 			{
 				word += 0b1;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//SUB
 		case 1:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b10;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b11;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//RSUB
 		case 2:
-				word += 0b100;
+			word += 0b100;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[3]);
+			//parse immediate
+			//add padding
 			break;
+		//CMP
 		case 3:
 			if((arg[2].at(0) == 'R' || arg[1].at(0) == 'r'))
 			{
 				word += 0b101;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//add padding
 			}
 			else
 			{
 				word += 0b110;
+				word = parse_reg(word,arg[1]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//AND
 		case 4:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b111;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b1000;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//OR
 		case 5:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b1001;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b1010;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//NOT
 		case 6:
 			word += 0b1011;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			//add padding
 			break;
+		//XOR
 		case 7:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b1100;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b1101;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//LSR
 		case 8:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b1110;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b1111;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//LSL
 		case 9:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b10000;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b10001;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//ASR
 		case 10:
 			word += 0b10010;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//ROR
 		case 11:
 			word += 0b10011;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//ROL
 		case 12:
 			word += 0b10100;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//MUL
 		case 13:
 			word += 0b10101;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//UMUL
 		case 14:
 			word += 0b10110;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//DIV
 		case 15:
 			word += 0b10111;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//UDIV
 		case 16:
 			word += 0b11000;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//MOD
 		case 17:
 			word += 0b11001;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//UMOD
 		case 18:
 			word += 0b11010;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//MOV
 		case 19:
 			if((arg[2].at(0) == 'R' || arg[1].at(0) == 'r'))
 			{
 				word += 0b11011;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//add padding
 			}
 			else
 			{
 				word += 0b11100;
+				word = parse_reg(word,arg[1]);
+				//parse immediate
+				//add padding
 			}
 			break;
+		//TRN
 		case 20:
 			word += 0b11101;
+			word = parse_reg(word,arg[1]);
+			//parse size
+			//add padding
 			break;
+		//LDR
 		case 21:
 			word += 0b10;
+			//parse size
+			word = parse_reg(word,arg[2]);
+			word = parse_reg(word,arg[3]);
+			//add padding
 			break;
+		//STR
 		case 22:
 			word += 0b11;
+			word = parse_reg(word,arg[1]);
+			word = parse_reg(word,arg[2]);
+			//add padding
 			break;
+		//B
 		case 23:
 			word += 0b1000;
+			//parse condition
+			//parse label
+			//add padding
 			break;
+		//BI
 		case 24:
 			word += 0b1001;
+			//parse condition
+			word = parse_reg(word,arg[2]);
+			//add padding
 			break;
+		//BL
 		case 25:
 			word += 0b1010;
+			//parse label
 			break;
+		//CALL
 		case 26:
 			word += 0b1011;
+			word = parse_reg(word,arg[1]);
+			//add padding
 			break;
 		default:
 			break;
