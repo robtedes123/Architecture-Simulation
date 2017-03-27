@@ -4,6 +4,14 @@
 
 // TODO: check shifts for undefined behavior
 
+//sign extend
+static inline int32_t SE(uint32_t data, int sign) {
+    int32_t new_data = (int32_t) data;
+    new_data <<= 32 - sign;
+    new_data >>= 32 - sign;
+    return new_data;
+}
+
 // Extract bits
 static inline uint32_t EB(uint32_t data, int hi, int lo) {
     assert(hi > lo);
@@ -41,6 +49,7 @@ CPU::exec() {
         }
 
         execInstruction(data);
+        getchar();
     }
 }
 
@@ -378,7 +387,7 @@ CPU::execBranchInstruction(uint32_t instruction) {
     switch (op) {
         case OP_B: {
             const uint32_t cond = EB(instruction, 28, 24);
-            const uint32_t label = EB(instruction, 24, 0);
+            int32_t label = SE(EB(instruction, 24, 0), 24);
             printf("B cond=%d %d\n", cond, label);
             B(cond, label);
             break;
@@ -391,7 +400,7 @@ CPU::execBranchInstruction(uint32_t instruction) {
             break;
         }
         case OP_BL: {
-            const uint32_t label = EB(instruction, 28, 0);
+            int32_t label = SE(EB(instruction, 28, 0), 28);
             printf("BL %d\n", label);
             BL(label);
             break;
@@ -1089,22 +1098,21 @@ CPU::STR(Reg& dst, Reg& src) {
 
 // THESE ARE UNTESTED!
 void
-CPU::B(uint32_t cond, uint32_t label) {
-    if (FLAGS.getData() & cond) {
-        uint32_t data = PC.getData() + label;
-        PC.setData(data);
+CPU::B(uint32_t cond, int32_t label) {
+    if (cond == AL || FLAGS.getData() == cond) {
+        PC.setData(PC.getData() + label);
     }
 }
 
 void
 CPU::BI(uint32_t cond, Reg& arg) {
-    if (FLAGS.getData() & cond) {
+    if (cond == AL || FLAGS.getData() == cond) {
         PC.setData(arg.getData());
     }
 }
 
 void
-CPU::BL(uint32_t label) {
+CPU::BL(int32_t label) {
     uint32_t pc = PC.getData();
 
     LR.setType(Reg::TypeInfo::WIDTH32);
