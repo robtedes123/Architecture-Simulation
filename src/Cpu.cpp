@@ -4,6 +4,13 @@
 
 // TODO: check shifts for undefined behavior
 
+// Extract bits
+static inline uint32_t EB(uint32_t data, int hi, int lo) {
+    assert(hi > lo);
+    int offset = 32 - hi;
+    return (data << offset) >> (offset + lo);
+}
+
 CPU::CPU(const vector<uint32_t>& program) {
     // zero out registers
     Reg defaultReg;
@@ -43,7 +50,7 @@ CPU::execInstruction(uint32_t instruction) {
     const int LOADSTORE = 1;
     const int BRANCH    = 2;
 
-    const int type = (instruction >> 30) & 0b11;
+    const int type = EB(instruction, 32, 30);
 
     switch (type) {
         case EXECUTION : execExecutionInstruction(instruction); break;
@@ -85,91 +92,91 @@ CPU::execExecutionInstruction(uint32_t instruction) {
     const auto OP_MOVI = 0b11100;
     const auto OP_TRN  = 0b11101;
 
-    const auto op = (instruction >> 25) & 0x1F;
+    const auto op = EB(instruction, 30, 25);
 
     switch (op) {
         case OP_ADD : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("ADD r%d r%d r%d\n", dst, op1, op2);
             ADD(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_ADDI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("ADD r%d r%d imm=%d\n", dst, op1, imm);
             ADD(reg[dst], reg[op1], imm);
             break;
         }
         case OP_SUB : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("SUB r%d r%d r%d\n", dst, op1, op2);
             SUB(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_SUBI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("SUB r%d r%d imm=%d\n", dst, op1, imm);
             SUB(reg[dst], reg[op1], imm);
             break;
         }
         case OP_RSUB : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("RSUB r%d imm=%d r%d\n", dst, imm, op1);
             RSUB(reg[dst], imm, reg[op1]);
             break;
         }
         case OP_CMP : {
-            const uint32_t op1 = (instruction >> 20) & 0x1F;
-            const uint32_t op2 = (instruction >> 15) & 0x1F;
+            const uint32_t op1 = EB(instruction, 25, 20);
+            const uint32_t op2 = EB(instruction, 20, 15);
             printf("CMP r%d r%d\n", op1, op2);
             CMP(reg[op1], reg[op2]);
             break;
         }
         case OP_CMPI : {
-            const uint32_t op1 = (instruction >> 20) & 0x1F;
-            const uint32_t imm = instruction & 0xFFFFF;
+            const uint32_t op1 = EB(instruction, 25, 20);
+            const uint32_t imm = EB(instruction, 20, 0);
             printf("CMP r%d imm=%d\n", op1, imm);
             CMP(reg[op1], imm);
             break;
         }
         case OP_AND : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("AND r%d r%d r%d\n", dst, op1, op2);
             AND(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_ANDI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("AND r%d r%d imm=%d\n", dst, op1, imm);
             AND(reg[dst], reg[op1], imm);
             break;
         }
         case OP_OR : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("OR r%d r%d r%d\n", dst, op1, op2);
             OR(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_ORI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("OR r%d r%d imm=%d\n", dst, op1, imm);
             OR(reg[dst], reg[op1], imm);
             break;
@@ -182,142 +189,142 @@ CPU::execExecutionInstruction(uint32_t instruction) {
             break;
         }
         case OP_XOR : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("XOR r%d r%d r%d\n", dst, op1, op2);
             XOR(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_XORI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("XOR r%d r%d imm=%d\n", dst, op1, imm);
             XOR(reg[dst], reg[op1], imm);
             break;
         }
         case OP_LSR : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("LSR r%d r%d r%d\n", dst, op1, op2);
             LSR(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_LSRI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("LSR r%d r%d imm=%d\n", dst, op1, imm);
             LSR(reg[dst], reg[op1], imm);
             break;
         }
         case OP_LSL : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("LSL r%d r%d r%d\n", dst, op1, op2);
             LSL(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_LSLI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t imm = instruction & 0x7FFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t imm = EB(instruction, 15, 0);
             printf("LSL r%d r%d imm=%d\n", dst, op1, imm);
             LSL(reg[dst], reg[op1], imm);
             break;
         }
         case OP_ASR : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("ASR r%d r%d r%d\n", dst, op1, op2);
             ASR(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_ROR : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("ROR r%d r%d r%d\n", dst, op1, op2);
             ROR(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_ROL : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("ROL r%d r%d r%d\n", dst, op1, op2);
             ROL(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_MUL : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("MUL r%d r%d r%d\n", dst, op1, op2);
             MUL(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_UMUL : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("UMUL r%d r%d r%d\n", dst, op1, op2);
             UMUL(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_DIV : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("DIV r%d r%d r%d\n", dst, op1, op2);
             DIV(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_UDIV : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("UDIV r%d r%d r%d\n", dst, op1, op2);
             UDIV(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_MOD : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("MOD r%d r%d r%d\n", dst, op1, op2);
             MOD(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_UMOD : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t op1 = (instruction >> 15) & 0x1F;
-            const uint32_t op2 = (instruction >> 10) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t op1 = EB(instruction, 20, 15);
+            const uint32_t op2 = EB(instruction, 15, 10);
             printf("UMOD r%d r%d r%d\n", dst, op1, op2);
             UMOD(reg[dst], reg[op1], reg[op2]);
             break;
         }
         case OP_MOV : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t src = (instruction >> 15) & 0x1F;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t src = EB(instruction, 20, 15);
             printf("MOV r%d r%d\n", dst, src);
             MOV(reg[dst], reg[src]);
             break;
         }
         case OP_MOVI : {
-            const uint32_t dst = (instruction >> 20) & 0x1F;
-            const uint32_t imm = instruction & 0x3FFFFF;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t imm = EB(instruction, 20, 0);
             printf("MOV r%d imm=%d\n", dst, imm);
             MOV(reg[dst], imm);
             break;
         }
         case OP_TRN : {
-            const uint32_t dst   = (instruction >> 20) & 0x1F;
-            const uint32_t width = (instruction >> 18) & 0b11;
+            const uint32_t dst = EB(instruction, 25, 20);
+            const uint32_t width = EB(instruction, 20, 18);
 
             printf("TRN r%d size=%d\n", dst, width);
             TRN(reg[dst], (Reg::TypeInfo)width);
@@ -334,20 +341,20 @@ CPU::execLoadStoreInstruction(uint32_t instruction) {
     const auto OP_LDR = 0b0;
     const auto OP_STR = 0b1;
 
-    const auto op = (instruction >> 29) & 0b1;
+    const auto op = EB(instruction, 30, 29);
 
     switch (op) {
         case OP_LDR: {
-            const uint32_t width = (instruction >> 27) & 0b11;
-            const uint32_t dst = (instruction >> 22) & 0b11111;
-            const uint32_t src = (instruction >> 17) & 0b11111;
+            const uint32_t width = EB(instruction, 29, 27);
+            const uint32_t dst = EB(instruction, 27, 22);
+            const uint32_t src = EB(instruction, 22, 17);
             printf("ldr size=%d r%d r%d\n", width, dst, src);
             LDR(reg[dst], reg[src], (Reg::TypeInfo)width);
             break;
         }
         case OP_STR: {
-            const uint32_t dst = (instruction >> 24) & 0b11111;
-            const uint32_t src = (instruction >> 19) & 0b11111;
+            const uint32_t dst = EB(instruction, 29, 24);
+            const uint32_t src = EB(instruction, 24, 19);
             printf("str r%d r%d\n", src, dst);
             STR(reg[dst], reg[src]);
             break;
@@ -365,32 +372,32 @@ CPU::execBranchInstruction(uint32_t instruction) {
     const auto OP_BL   = 0b10;
     const auto OP_CALL = 0b11;
 
-    const auto op = (instruction >> 28) & 0b11;
+    const auto op = EB(instruction, 30, 28);
 
     //TODO: check label sign extension
     switch (op) {
         case OP_B: {
-            const uint32_t cond = (instruction >> 24) & 0xF;
-            const uint32_t label = instruction & 0xFFFFFF;
+            const uint32_t cond = EB(instruction, 28, 24);
+            const uint32_t label = EB(instruction, 24, 0);
             printf("B cond=%d %d\n", cond, label);
             B(cond, label);
             break;
         }
         case OP_BI: {
-            const uint32_t cond = (instruction >> 24) & 0xF;
-            const uint32_t idx  = (instruction >> 19) & 0x1F;
+            const uint32_t cond = EB(instruction, 28, 24);
+            const uint32_t idx  = EB(instruction, 24, 19);
             printf("BI cond=%d r%d\n", cond, idx);
             BI(cond, reg[idx]);
             break;
         }
         case OP_BL: {
-            const uint32_t label = instruction & 0xFFFFFFF;
+            const uint32_t label = EB(instruction, 28, 0);
             printf("BL %d\n", label);
             BL(label);
             break;
         }
         case OP_CALL: {
-            const uint32_t idx = (instruction >> 23) & 0x1F;
+            const uint32_t idx = EB(instruction, 28, 23);
             printf("CALL r%d\n", idx);
             CALL(reg[idx]);
             break;
