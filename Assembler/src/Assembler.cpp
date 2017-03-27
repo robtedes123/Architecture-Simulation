@@ -28,16 +28,16 @@ void Assembler::parse()
 			{
 				cout << "Unable to open output file" << endl;
 			}
-			// if(file_out_bin.is_open())
-			// {
-			//
-			// 	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
-			//
-			// }
-			// else
-			// {
-			// 	cout << "Unable to open binary output file" << endl;
-			// }
+			if(file_out_bin.is_open())
+			{
+			
+			 	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
+		
+			}
+			else
+			{
+				cout << "Unable to open binary output file" << endl;
+			}
 		}
 	}
 	else
@@ -332,23 +332,35 @@ uint32_t Assembler::parse_line(string line)
 			break;
 		//LDR
 		case 21:
-			word += 0b10;
-			//parse size
+			word += 0b1;
+			word = word << 3;
+
+			if(stoi(arg[1]) == 16)
+			{
+				word += 0b1;
+			}
+			else if(stoi(arg[1]) == 32)
+			{
+				word += 0b10;
+			}
+
+			word = word << 2;
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word = word << 16;
 			break;
 		//STR
 		case 22:
 			word += 0b11;
+			word = word << 3;
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
-			//add padding
+			word = word << 18;
 			break;
 		//B
 		case 23:
 			word += 0b1000;
-			//parse condition
+			word = parse_cond(word, arg[1]);
 			//parse label
 			//add padding
 			break;
