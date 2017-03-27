@@ -84,7 +84,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 15);
 				//add padding
 			}
 			break;
@@ -470,7 +470,7 @@ uint32_t Assembler::parse_reg(uint32_t word, string arg)
 				break;
 		}
 	}
-	
+
 	switch(arg.at(0))
 	{
 		case 'L':
@@ -493,14 +493,14 @@ uint32_t Assembler::parse_reg(uint32_t word, string arg)
 
 }
 
-uint32_t parse_imm(uint32_t word, string arg, int shift)
+uint32_t Assembler::parse_imm(uint32_t word, string arg, int shift)
 {
 	int temp = stoi(arg);
 	word = word << shift;
 	return word += temp;
 }
 
-uint32_t parse_cond(uint32_t word, string arg)
+uint32_t Assembler::parse_cond(uint32_t word, string arg)
 {
 
 	word = word << 4;
@@ -534,6 +534,7 @@ uint32_t parse_cond(uint32_t word, string arg)
 		default:
 			break;
 	}
+	return word;
 }
 
 void enumerate()
