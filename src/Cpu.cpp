@@ -191,8 +191,8 @@ CPU::execExecutionInstruction(uint32_t instruction) {
             break;
         }
         case OP_NOT : {
-            const uint32_t op1 = (instruction >> 20) & 0x1F;
-            const uint32_t op2 = (instruction >> 15) & 0x1F;
+            const uint32_t op1 = EB(instruction, 25, 20);
+            const uint32_t op2 = EB(instruction, 20, 15);
             printf("NOT r%d r%d\n", op1, op2);
             NOT(reg[op1], reg[op2]);
             break;
