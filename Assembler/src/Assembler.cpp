@@ -361,27 +361,32 @@ uint32_t Assembler::parse_line(string line)
 		//B
 		case 23:
 			word += 0b1000;
+			word = word << 4;
 			word = parse_cond(word, arg[1]);
-			//parse label
-			//add padding
+			// encode label
+			word = word << 27;
 			break;
 		//BI
 		case 24:
 			word += 0b1001;
-			//parse condition
+			word = word << 4;
+			word = parse_cond(word, arg[1]);
 			word = parse_reg(word,arg[2]);
-			//add padding
+			word = word << 18;
 			break;
 		//BL
 		case 25:
 			word += 0b1010;
-			//parse label
+			word = word << 4;
+			// encode label
+			word = word << 27;
 			break;
 		//CALL
 		case 26:
 			word += 0b1011;
+			word = word << 4;
 			word = parse_reg(word,arg[1]);
-			//add padding
+			word = word << 22;
 			break;
 		default:
 			break;
