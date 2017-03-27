@@ -22,20 +22,57 @@ class CPU {
         void execBranchInstruction(uint32_t instruction);
 
         // EXECUTION
-        void add(Reg& dst, Reg& op1, Reg& op2);
-        void mov(Reg& dst, uint32_t imm);
-        void mov(Reg& dst, Reg& src);
-        void trn(Reg& arg, Reg::TypeInfo type);
+        void ADD(Reg& dst, Reg& op1, Reg& op2);
+        void ADD(Reg& dst, Reg& op1, uint32_t imm);
+        void SUB(Reg& dst, Reg& op1, Reg& op2);
+        void SUB(Reg& dst, Reg& op1, uint32_t imm);
+        void RSUB(Reg& dst, uint32_t imm, Reg& op2);
+        void CMP(Reg& arg1, Reg& arg2);
+        void CMP(Reg& arg1, uint32_t imm);
+        void AND(Reg& dst, Reg& op1, Reg& op2);
+        void AND(Reg& dst, Reg& op1, uint32_t imm);
+        void OR(Reg& dst, Reg& op1, Reg& op2);
+        void OR(Reg& dst, Reg& op1, uint32_t imm);
+        void NOT(Reg& dst, Reg& arg);
+        void XOR(Reg& dst, Reg& op1, Reg& op2);
+        void XOR(Reg& dst, Reg& op1, uint32_t imm);
+        void LSR(Reg& dst, Reg& op1, Reg& op2);
+        void LSR(Reg& dst, Reg& op1, uint32_t imm);
+        void LSL(Reg& dst, Reg& op1, Reg& op2);
+        void LSL(Reg& dst, Reg& op1, uint32_t imm);
+        void ASR(Reg& dst, Reg& op1, Reg& op2);
+        void ROR(Reg& dst, Reg& op1, Reg& op2);
+        void ROL(Reg& dst, Reg& op1, Reg& op2);
+        void MUL(Reg& dst, Reg& op1, Reg& op2);
+        void UMUL(Reg& dst, Reg& op1, Reg& op2);
+        void DIV(Reg& dst, Reg& op1, Reg& op2);
+        void UDIV(Reg& dst, Reg& op1, Reg& op2);
+        void MOD(Reg& dst, Reg& op1, Reg& op2);
+        void UMOD(Reg& dst, Reg& op1, Reg& op2);
+        void MOV(Reg& dst, uint32_t imm);
+        void MOV(Reg& dst, Reg& src);
+        void TRN(Reg& arg, Reg::TypeInfo type);
 
         // LOAD/STORE
-        void ldr(Reg& dst, Reg& src, Reg::TypeInfo type);
-        void str(Reg& dst, Reg& src);
+        void LDR(Reg& dst, Reg& src, Reg::TypeInfo type);
+        void STR(Reg& dst, Reg& src);
 
         // BRANCH
-        void branch(uint32_t cond, uint32_t label);
-        void branch_indirect(uint32_t cond, Reg& arg);
-        void branch_and_link(uint32_t label);
-        void call(Reg& arg);
+        void B(uint32_t cond, uint32_t label);
+        void BI(uint32_t cond, Reg& arg);
+        void BL(uint32_t label);
+        void CALL(Reg& arg);
+
+        // FLAGS
+        const static auto AL = 0;
+        const static auto GT = 1;
+        const static auto LT = 2;
+        const static auto EQ = 3;
+        const static auto NE = 4;
+        const static auto OF = 5;
+        const static auto UF = 6;
+        const static auto CA = 7;
+        const static auto DZ = 8;
 
         // Memory
         Memory mem;

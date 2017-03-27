@@ -20,6 +20,13 @@ struct Reg {
             return (TypeInfo) max_size;
         }
 
+        static TypeInfo chooseMaxWidth(Reg& arg1, TypeInfo ti) {
+            int a1_size = (int)arg1.getType();
+            int a2_size = (int)ti;
+            int max_size = a1_size >= a2_size ? a1_size : a2_size;
+            return (TypeInfo) max_size;
+        }
+
         int width() const;
 
         TypeInfo getType() const;

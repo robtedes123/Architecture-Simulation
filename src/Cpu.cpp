@@ -2,6 +2,8 @@
 
 #include <cassert>
 
+// TODO: check shifts for undefined behavior
+
 CPU::CPU(const vector<uint32_t>& program) {
     // zero out registers
     Reg defaultReg;
@@ -52,273 +54,273 @@ CPU::execInstruction(uint32_t instruction) {
 
 void
 CPU::execExecutionInstruction(uint32_t instruction) {
-    const auto ADD  = 0b00000;
-    const auto ADDI = 0b00001;
-    const auto SUB  = 0b00010;
-    const auto SUBI = 0b00011;
-    const auto RSUB = 0b00100;
-    const auto CMP  = 0b00101;
-    const auto CMPI = 0b00110;
-    const auto AND  = 0b00111;
-    const auto ANDI = 0b01000;
-    const auto OR   = 0b01001;
-    const auto ORI  = 0b01010;
-    const auto NOT  = 0b01011;
-    const auto XOR  = 0b01100;
-    const auto XORI = 0b01101;
-    const auto LSR  = 0b01110;
-    const auto LSRI = 0b01111;
-    const auto LSL  = 0b10000;
-    const auto LSLI = 0b10001;
-    const auto ASR  = 0b10010;
-    const auto ROR  = 0b10011;
-    const auto ROL  = 0b10100;
-    const auto MUL  = 0b10101;
-    const auto UMUL = 0b10110;
-    const auto DIV  = 0b10111;
-    const auto UDIV = 0b11000;
-    const auto MOD  = 0b11001;
-    const auto UMOD = 0b11010;
-    const auto MOV  = 0b11011;
-    const auto MOVI = 0b11100;
-    const auto TRN  = 0b11101;
+    const auto OP_ADD  = 0b00000;
+    const auto OP_ADDI = 0b00001;
+    const auto OP_SUB  = 0b00010;
+    const auto OP_SUBI = 0b00011;
+    const auto OP_RSUB = 0b00100;
+    const auto OP_CMP  = 0b00101;
+    const auto OP_CMPI = 0b00110;
+    const auto OP_AND  = 0b00111;
+    const auto OP_ANDI = 0b01000;
+    const auto OP_OR   = 0b01001;
+    const auto OP_ORI  = 0b01010;
+    const auto OP_NOT  = 0b01011;
+    const auto OP_XOR  = 0b01100;
+    const auto OP_XORI = 0b01101;
+    const auto OP_LSR  = 0b01110;
+    const auto OP_LSRI = 0b01111;
+    const auto OP_LSL  = 0b10000;
+    const auto OP_LSLI = 0b10001;
+    const auto OP_ASR  = 0b10010;
+    const auto OP_ROR  = 0b10011;
+    const auto OP_ROL  = 0b10100;
+    const auto OP_MUL  = 0b10101;
+    const auto OP_UMUL = 0b10110;
+    const auto OP_DIV  = 0b10111;
+    const auto OP_UDIV = 0b11000;
+    const auto OP_MOD  = 0b11001;
+    const auto OP_UMOD = 0b11010;
+    const auto OP_MOV  = 0b11011;
+    const auto OP_MOVI = 0b11100;
+    const auto OP_TRN  = 0b11101;
 
     const auto op = (instruction >> 25) & 0x1F;
 
     switch (op) {
-        case ADD : {
+        case OP_ADD : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("ADD r%d r%d r%d\n", dst, op1, op2);
-            //add(reg[dst], reg[op1], reg[op2]);
+            ADD(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case ADDI : {
+        case OP_ADDI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("ADD r%d r%d imm=%d\n", dst, op1, imm);
-            //add(reg[dst], reg[op1], imm);
+            ADD(reg[dst], reg[op1], imm);
             break;
         }
-        case SUB  : {
+        case OP_SUB : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("SUB r%d r%d r%d\n", dst, op1, op2);
-            //sub(reg[dst], reg[op1], reg[op2]);
+            SUB(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case SUBI : {
+        case OP_SUBI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("SUB r%d r%d imm=%d\n", dst, op1, imm);
-            //sub(reg[dst], reg[op1], imm);
+            SUB(reg[dst], reg[op1], imm);
             break;
         }
-        case RSUB : {
+        case OP_RSUB : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("RSUB r%d imm=%d r%d\n", dst, imm, op1);
-            //rsub(reg[dst], reg[op1], imm);
+            RSUB(reg[dst], imm, reg[op1]);
             break;
         }
-        case CMP  : {
+        case OP_CMP : {
             const uint32_t op1 = (instruction >> 20) & 0x1F;
             const uint32_t op2 = (instruction >> 15) & 0x1F;
             printf("CMP r%d r%d\n", op1, op2);
-            //cmp(reg[op1], reg[op2]);
+            CMP(reg[op1], reg[op2]);
             break;
         }
-        case CMPI : {
+        case OP_CMPI : {
             const uint32_t op1 = (instruction >> 20) & 0x1F;
             const uint32_t imm = instruction & 0xFFFFF;
             printf("CMP r%d imm=%d\n", op1, imm);
-            //cmp(reg[op1], imm);
+            CMP(reg[op1], imm);
             break;
         }
-        case AND  : {
+        case OP_AND : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("AND r%d r%d r%d\n", dst, op1, op2);
-            //and(reg[dst], reg[op1], reg[op2]);
+            AND(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case ANDI : {
+        case OP_ANDI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("AND r%d r%d imm=%d\n", dst, op1, imm);
-            //and(reg[dst], reg[op1], imm);
+            AND(reg[dst], reg[op1], imm);
             break;
         }
-        case OR   : {
+        case OP_OR : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("OR r%d r%d r%d\n", dst, op1, op2);
-            //or(reg[dst], reg[op1], reg[op2]);
+            OR(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case ORI  : {
+        case OP_ORI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("OR r%d r%d imm=%d\n", dst, op1, imm);
-            //or(reg[dst], reg[op1], imm);
+            OR(reg[dst], reg[op1], imm);
             break;
         }
-        case NOT  : {
+        case OP_NOT : {
             const uint32_t op1 = (instruction >> 20) & 0x1F;
             const uint32_t op2 = (instruction >> 15) & 0x1F;
             printf("NOT r%d r%d\n", op1, op2);
-            //not(reg[op1], reg[op2]);
+            NOT(reg[op1], reg[op2]);
             break;
         }
-        case XOR  : {
+        case OP_XOR : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("XOR r%d r%d r%d\n", dst, op1, op2);
-            //xor(reg[dst], reg[op1], reg[op2]);
+            XOR(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case XORI : {
+        case OP_XORI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("XOR r%d r%d imm=%d\n", dst, op1, imm);
-            //xor(reg[dst], reg[op1], imm);
+            XOR(reg[dst], reg[op1], imm);
             break;
         }
-        case LSR  : {
+        case OP_LSR : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("LSR r%d r%d r%d\n", dst, op1, op2);
-            //lsr(reg[dst], reg[op1], reg[op2]);
+            LSR(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case LSRI : {
+        case OP_LSRI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("LSR r%d r%d imm=%d\n", dst, op1, imm);
-            //lsr(reg[dst], reg[op1], imm);
+            LSR(reg[dst], reg[op1], imm);
             break;
         }
-        case LSL  : {
+        case OP_LSL : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("LSL r%d r%d r%d\n", dst, op1, op2);
-            //lsl(reg[dst], reg[op1], reg[op2]);
+            LSL(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case LSLI : {
+        case OP_LSLI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t imm = instruction & 0x7FFF;
             printf("LSL r%d r%d imm=%d\n", dst, op1, imm);
-            //lsl(reg[dst], reg[op1], imm);
+            LSL(reg[dst], reg[op1], imm);
             break;
         }
-        case ASR  : {
+        case OP_ASR : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("ASR r%d r%d r%d\n", dst, op1, op2);
-            //asr(reg[dst], reg[op1], reg[op2]);
+            ASR(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case ROR  : {
+        case OP_ROR : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("ROR r%d r%d r%d\n", dst, op1, op2);
-            //ror(reg[dst], reg[op1], reg[op2]);
+            ROR(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case ROL  : {
+        case OP_ROL : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("ROL r%d r%d r%d\n", dst, op1, op2);
-            //rol(reg[dst], reg[op1], reg[op2]);
+            ROL(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case MUL  : {
+        case OP_MUL : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("MUL r%d r%d r%d\n", dst, op1, op2);
-            //mul(reg[dst], reg[op1], reg[op2]);
+            MUL(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case UMUL : {
+        case OP_UMUL : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("UMUL r%d r%d r%d\n", dst, op1, op2);
-            //umul(reg[dst], reg[op1], reg[op2]);
+            UMUL(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case DIV  : {
+        case OP_DIV : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("DIV r%d r%d r%d\n", dst, op1, op2);
-            //div(reg[dst], reg[op1], reg[op2]);
+            DIV(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case UDIV : {
+        case OP_UDIV : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("UDIV r%d r%d r%d\n", dst, op1, op2);
-            //udiv(reg[dst], reg[op1], reg[op2]);
+            UDIV(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case MOD  : {
+        case OP_MOD : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("MOD r%d r%d r%d\n", dst, op1, op2);
-            //mod(reg[dst], reg[op1], reg[op2]);
+            MOD(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case UMOD : {
+        case OP_UMOD : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t op1 = (instruction >> 15) & 0x1F;
             const uint32_t op2 = (instruction >> 10) & 0x1F;
             printf("UMOD r%d r%d r%d\n", dst, op1, op2);
-            //umod(reg[dst], reg[op1], reg[op2]);
+            UMOD(reg[dst], reg[op1], reg[op2]);
             break;
         }
-        case MOV  : {
+        case OP_MOV : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t src = (instruction >> 15) & 0x1F;
             printf("MOV r%d r%d\n", dst, src);
-            //mov(reg[dst], reg[src]);
+            MOV(reg[dst], reg[src]);
             break;
         }
-        case MOVI : {
+        case OP_MOVI : {
             const uint32_t dst = (instruction >> 20) & 0x1F;
             const uint32_t imm = instruction & 0x3FFFFF;
             printf("MOV r%d imm=%d\n", dst, imm);
-            //mov(reg[dst], imm);
+            MOV(reg[dst], imm);
             break;
         }
-        case TRN  : {
+        case OP_TRN : {
             const uint32_t dst   = (instruction >> 20) & 0x1F;
             const uint32_t width = (instruction >> 18) & 0b11;
 
             printf("TRN r%d size=%d\n", dst, width);
-            //trn(reg[dst], (Reg::TypeInfo)width);
+            TRN(reg[dst], (Reg::TypeInfo)width);
             break;
         }
     }
@@ -329,25 +331,25 @@ CPU::execExecutionInstruction(uint32_t instruction) {
 
 void
 CPU::execLoadStoreInstruction(uint32_t instruction) {
-    const auto LDR = 0b0;
-    const auto STR = 0b1;
+    const auto OP_LDR = 0b0;
+    const auto OP_STR = 0b1;
 
     const auto op = (instruction >> 29) & 0b1;
 
     switch (op) {
-        case LDR: {
+        case OP_LDR: {
             const uint32_t width = (instruction >> 27) & 0b11;
             const uint32_t dst = (instruction >> 22) & 0b11111;
             const uint32_t src = (instruction >> 17) & 0b11111;
             printf("ldr size=%d r%d r%d\n", width, dst, src);
-            //ldr(reg[dst], reg[src], (Reg::TypeInfo)width);
+            LDR(reg[dst], reg[src], (Reg::TypeInfo)width);
             break;
         }
-        case STR: {
+        case OP_STR: {
             const uint32_t dst = (instruction >> 24) & 0b11111;
             const uint32_t src = (instruction >> 19) & 0b11111;
             printf("str r%d r%d\n", src, dst);
-            //str(reg[dst], reg[src]);
+            STR(reg[dst], reg[src]);
             break;
         }
     }
@@ -358,39 +360,39 @@ CPU::execLoadStoreInstruction(uint32_t instruction) {
 
 void
 CPU::execBranchInstruction(uint32_t instruction) {
-    const auto B    = 0b00;
-    const auto BI   = 0b01;
-    const auto BL   = 0b10;
-    const auto CALL = 0b11;
+    const auto OP_B    = 0b00;
+    const auto OP_BI   = 0b01;
+    const auto OP_BL   = 0b10;
+    const auto OP_CALL = 0b11;
 
     const auto op = (instruction >> 28) & 0b11;
 
     //TODO: check label sign extension
     switch (op) {
-        case B: {
+        case OP_B: {
             const uint32_t cond = (instruction >> 24) & 0xF;
             const uint32_t label = instruction & 0xFFFFFF;
             printf("B cond=%d %d\n", cond, label);
-            branch(cond, label);
+            B(cond, label);
             break;
         }
-        case BI: {
+        case OP_BI: {
             const uint32_t cond = (instruction >> 24) & 0xF;
             const uint32_t idx  = (instruction >> 19) & 0x1F;
             printf("BI cond=%d r%d\n", cond, idx);
-            branch_indirect(cond, reg[idx]);
+            BI(cond, reg[idx]);
             break;
         }
-        case BL: {
+        case OP_BL: {
             const uint32_t label = instruction & 0xFFFFFFF;
             printf("BL %d\n", label);
-            branch_and_link(label);
+            BL(label);
             break;
         }
-        case CALL: {
+        case OP_CALL: {
             const uint32_t idx = (instruction >> 23) & 0x1F;
             printf("CALL r%d\n", idx);
-            call(reg[idx]);
+            CALL(reg[idx]);
             break;
         }
     }
@@ -401,7 +403,7 @@ CPU::execBranchInstruction(uint32_t instruction) {
 /******* EXECUTION INSTRUCTIONS *******/
 
 void
-CPU::add(Reg& dst, Reg& op1, Reg& op2) {
+CPU::ADD(Reg& dst, Reg& op1, Reg& op2) {
     Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
     dst.setType(dst_size);
 
@@ -415,24 +417,21 @@ CPU::add(Reg& dst, Reg& op1, Reg& op2) {
         case 1: {
             uint8_t res;
             if (__builtin_add_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
-                // TODO: set overflow
-                puts("OVERFLOW");
+                FLAGS.setData(OF);
             data = res;
             break;
         }
         case 2: {
             uint16_t res;
             if(__builtin_add_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
-                // TODO: set overflow
-                puts("OVERFLOW");
+                FLAGS.setData(OF);
             data = res;
             break;
         }
         case 4: {
             uint32_t res;
             if(__builtin_add_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
-                // TODO: set overflow
-                puts("OVERFLOW");
+                FLAGS.setData(OF);
             data = res;
             break;
         }
@@ -442,19 +441,608 @@ CPU::add(Reg& dst, Reg& op1, Reg& op2) {
 }
 
 void
-CPU::mov(Reg& dst, uint32_t imm) {
+CPU::ADD(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t res;
+            if (__builtin_add_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 2: {
+            uint16_t res;
+            if(__builtin_add_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 4: {
+            uint32_t res;
+            if(__builtin_add_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::SUB(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t res;
+            if (__builtin_sub_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 2: {
+            uint16_t res;
+            if(__builtin_sub_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 4: {
+            uint32_t res;
+            if(__builtin_sub_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::SUB(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t res;
+            if (__builtin_sub_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 2: {
+            uint16_t res;
+            if(__builtin_sub_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 4: {
+            uint32_t res;
+            if(__builtin_sub_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::RSUB(Reg& dst, uint32_t imm, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op2, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = imm;
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t res;
+            if (__builtin_sub_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 2: {
+            uint16_t res;
+            if(__builtin_sub_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+        case 4: {
+            uint32_t res;
+            if(__builtin_sub_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
+                FLAGS.setData(UF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::CMP(Reg& arg1, Reg& arg2) {
+    uint32_t a1_data = arg1.getData();
+    uint32_t a2_data = arg2.getData();
+
+    if (a1_data > a2_data) {
+        FLAGS.setData(GT);
+    } else if (a1_data < a2_data) {
+        FLAGS.setData(LT);
+    } else if (a1_data == a2_data) {
+        FLAGS.setData(EQ);
+    } else if (a1_data != a2_data) {
+        FLAGS.setData(NE);
+    }
+}
+
+void
+CPU::CMP(Reg& arg1, uint32_t imm) {
+    uint32_t a1_data = arg1.getData();
+    uint32_t a2_data = imm;
+
+    if (a1_data > a2_data) {
+        FLAGS.setData(GT);
+    } else if (a1_data < a2_data) {
+        FLAGS.setData(LT);
+    } else if (a1_data == a2_data) {
+        FLAGS.setData(EQ);
+    } else if (a1_data != a2_data) {
+        FLAGS.setData(NE);
+    }
+}
+
+void
+CPU::AND(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data & op2_data);
+}
+
+void
+CPU::AND(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    dst.setData(op1_data & op2_data);
+}
+
+void
+CPU::OR(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data | op2_data);
+}
+
+void
+CPU::OR(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    dst.setData(op1_data | op2_data);
+}
+
+void
+CPU::NOT(Reg& dst, Reg& arg) {
+    dst.setType(arg.getType());
+    dst.setData(~arg.getData());
+}
+
+void
+CPU::XOR(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data ^ op2_data);
+}
+
+void
+CPU::XOR(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    dst.setData(op1_data ^ op2_data);
+}
+
+void
+CPU::LSR(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data >> op2_data);
+}
+
+void
+CPU::LSR(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    dst.setData(op1_data >> op2_data);
+}
+
+void
+CPU::LSL(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data << op2_data);
+}
+
+void
+CPU::LSL(Reg& dst, Reg& op1, uint32_t imm) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, Reg::TypeInfo::WIDTH16);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = imm;
+
+    dst.setData(op1_data << op2_data);
+}
+
+void
+CPU::ASR(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    int32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    dst.setData(op1_data >> op2_data);
+}
+
+void
+CPU::ROR(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t op1 = (uint8_t)op1_data;
+            uint8_t op2 = (uint8_t)op2_data;
+            data = (op1 >> op2 | op1 << (8 - op2));
+            break;
+        }
+        case 2: {
+            uint8_t op1 = (uint16_t)op1_data;
+            uint8_t op2 = (uint16_t)op2_data;
+            data = (op1 >> op2 | op1 << (16 - op2));
+            break;
+        }
+        case 4: {
+            uint8_t op1 = (uint32_t)op1_data;
+            uint8_t op2 = (uint32_t)op2_data;
+            data = (op1 >> op2 | op1 << (32 - op2));
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::ROL(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t op1 = (uint8_t)op1_data;
+            uint8_t op2 = (uint8_t)op2_data;
+            data = (op1 << op2 | op1 >> (8 - op2));
+            break;
+        }
+        case 2: {
+            uint8_t op1 = (uint16_t)op1_data;
+            uint8_t op2 = (uint16_t)op2_data;
+            data = (op1 << op2 | op1 >> (16 - op2));
+            break;
+        }
+        case 4: {
+            uint8_t op1 = (uint32_t)op1_data;
+            uint8_t op2 = (uint32_t)op2_data;
+            data = (op1 << op2 | op1 >> (32 - op2));
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::MUL(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            int8_t res;
+            if (__builtin_mul_overflow((int8_t)op1_data, (int8_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 2: {
+            int16_t res;
+            if(__builtin_mul_overflow((int16_t)op1_data, (int16_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 4: {
+            int32_t res;
+            if(__builtin_mul_overflow((int32_t)op1_data, (int32_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::UMUL(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    int width = dst.width();
+
+    uint32_t data;
+    switch(width) {
+        case 1: {
+            uint8_t res;
+            if (__builtin_mul_overflow((uint8_t)op1_data, (uint8_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 2: {
+            uint16_t res;
+            if(__builtin_mul_overflow((uint16_t)op1_data, (uint16_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+        case 4: {
+            uint32_t res;
+            if(__builtin_mul_overflow((uint32_t)op1_data, (uint32_t)op2_data, &res))
+                FLAGS.setData(OF);
+            data = res;
+            break;
+        }
+    }
+
+    dst.setData(data);
+}
+
+void
+CPU::DIV(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    if (op2_data == 0) {
+        FLAGS.setData(DZ);
+    } else {
+        int width = dst.width();
+
+        uint32_t data;
+        switch(width) {
+            case 1: {
+                data = (int8_t)op1_data / (int8_t)op2_data;
+                break;
+            }
+            case 2: {
+                data = (int16_t)op1_data / (int16_t)op2_data;
+                break;
+            }
+            case 4: {
+                data = (int32_t)op1_data / (int32_t)op2_data;
+                break;
+            }
+        }
+
+        dst.setData(data);
+    }
+}
+
+void
+CPU::UDIV(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    if (op2_data == 0) {
+        FLAGS.setData(DZ);
+    } else {
+        int width = dst.width();
+
+        uint32_t data;
+        switch(width) {
+            case 1: {
+                data = (uint8_t)op1_data / (uint8_t)op2_data;
+                break;
+            }
+            case 2: {
+                data = (uint16_t)op1_data / (uint16_t)op2_data;
+                break;
+            }
+            case 4: {
+                data = (uint32_t)op1_data / (uint32_t)op2_data;
+                break;
+            }
+        }
+
+        dst.setData(data);
+    }
+}
+
+void
+CPU::MOD(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    if (op2_data == 0) {
+        FLAGS.setData(DZ);
+    } else {
+        int width = dst.width();
+
+        uint32_t data;
+        switch(width) {
+            case 1: {
+                data = (int8_t)op1_data % (int8_t)op2_data;
+                break;
+            }
+            case 2: {
+                data = (int16_t)op1_data % (int16_t)op2_data;
+                break;
+            }
+            case 4: {
+                data = (int32_t)op1_data % (int32_t)op2_data;
+                break;
+            }
+        }
+
+        dst.setData(data);
+    }
+}
+
+void
+CPU::UMOD(Reg& dst, Reg& op1, Reg& op2) {
+    Reg::TypeInfo dst_size = Reg::chooseMaxWidth(op1, op2);
+    dst.setType(dst_size);
+
+    uint32_t op1_data = op1.getData();
+    uint32_t op2_data = op2.getData();
+
+    if (op2_data == 0) {
+        FLAGS.setData(DZ);
+    } else {
+        int width = dst.width();
+
+        uint32_t data;
+        switch(width) {
+            case 1: {
+                data = (uint8_t)op1_data % (uint8_t)op2_data;
+                break;
+            }
+            case 2: {
+                data = (uint16_t)op1_data % (uint16_t)op2_data;
+                break;
+            }
+            case 4: {
+                data = (uint32_t)op1_data % (uint32_t)op2_data;
+                break;
+            }
+        }
+
+        dst.setData(data);
+    }
+}
+
+void
+CPU::MOV(Reg& dst, uint32_t imm) {
     dst.setType(Reg::TypeInfo::WIDTH32);
     dst.setData(imm);
 }
 
 void
-CPU::mov(Reg& dst, Reg& src) {
+CPU::MOV(Reg& dst, Reg& src) {
     dst.setType(src.getType());
     dst.setData(src.getData());
 }
 
 void
-CPU::trn(Reg& arg, Reg::TypeInfo type) {
+CPU::TRN(Reg& arg, Reg::TypeInfo type) {
     uint32_t data = arg.getData();
     arg.setType(type);
     arg.setData(data);
@@ -463,7 +1051,7 @@ CPU::trn(Reg& arg, Reg::TypeInfo type) {
 /******* LOAD/STORE INSTRUCTIONS *******/
 
 void
-CPU::ldr(Reg& dst, Reg& src, Reg::TypeInfo type) {
+CPU::LDR(Reg& dst, Reg& src, Reg::TypeInfo type) {
     assert(type != Reg::TypeInfo::UNUSED);
 
     dst.setType(type);
@@ -480,7 +1068,7 @@ CPU::ldr(Reg& dst, Reg& src, Reg::TypeInfo type) {
 }
 
 void
-CPU::str(Reg& dst, Reg& src) {
+CPU::STR(Reg& dst, Reg& src) {
     const uint32_t address = dst.getData();
     const uint32_t data = src.getData();
 
@@ -494,7 +1082,7 @@ CPU::str(Reg& dst, Reg& src) {
 
 // THESE ARE UNTESTED!
 void
-CPU::branch(uint32_t cond, uint32_t label) {
+CPU::B(uint32_t cond, uint32_t label) {
     if (FLAGS.getData() & cond) {
         uint32_t data = PC.getData() + label;
         PC.setData(data);
@@ -502,28 +1090,28 @@ CPU::branch(uint32_t cond, uint32_t label) {
 }
 
 void
-CPU::branch_indirect(uint32_t cond, Reg& arg) {
+CPU::BI(uint32_t cond, Reg& arg) {
     if (FLAGS.getData() & cond) {
         PC.setData(arg.getData());
     }
 }
 
 void
-CPU::branch_and_link(uint32_t label) {
+CPU::BL(uint32_t label) {
     uint32_t pc = PC.getData();
 
     LR.setType(Reg::TypeInfo::WIDTH32);
-    LR.setData(pc + 4);
+    LR.setData(pc + sizeof(uint32_t));
 
     PC.setData(pc + label);
 }
 
 void
-CPU::call(Reg& arg) {
+CPU::CALL(Reg& arg) {
     uint32_t pc = PC.getData();
 
     LR.setType(Reg::TypeInfo::WIDTH32);
-    LR.setData(pc + 4);
+    LR.setData(pc + sizeof(uint32_t));
 
     PC.setData(pc + arg.getData());
 }
