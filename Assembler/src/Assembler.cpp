@@ -239,6 +239,30 @@ uint32_t Assembler::parse_reg(uint32_t word, string arg)
 			break;
 		case 15:
 			break;
+		case 16:
+			break;
+		case 17:
+			break;
+		case 18:
+			break;
+		case 19:
+			break;
+		case 20:
+			break;
+		case 21:
+			break;
+		case 22:
+			break;
+		case 23:
+			break;
+		case 24:
+			break;
+		case 25:
+			break;
+		case 26:
+			break;
+		case 27:
+			break;
 		default:
 			break;
 	}
