@@ -1,4 +1,4 @@
-EXE := arch-sim
+EXE := assembler-sim
 
 SRCDIR := src
 OBJDIR := .obj
