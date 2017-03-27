@@ -614,8 +614,10 @@ CPU::CMP(Reg& arg1, Reg& arg2) {
     uint32_t a2_data = arg2.getData();
 
     if (a1_data > a2_data) {
+        puts("GT");
         FLAGS.setData(GT);
     } else if (a1_data < a2_data) {
+        puts("LT");
         FLAGS.setData(LT);
     } else if (a1_data == a2_data) {
         FLAGS.setData(EQ);
@@ -1100,6 +1102,8 @@ void
 CPU::B(uint32_t cond, int32_t label) {
     if (cond == AL || FLAGS.getData() == cond) {
         PC.setData(PC.getData() + label);
+    } else {
+        PC.setData(PC.getData() + sizeof(uint32_t));
     }
 }
 
@@ -1107,6 +1111,8 @@ void
 CPU::BI(uint32_t cond, Reg& arg) {
     if (cond == AL || FLAGS.getData() == cond) {
         PC.setData(arg.getData());
+    } else {
+        PC.setData(PC.getData() + sizeof(uint32_t));
     }
 }
 
