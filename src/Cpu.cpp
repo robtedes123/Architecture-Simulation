@@ -1096,7 +1096,6 @@ CPU::STR(Reg& dst, Reg& src) {
 
 /******* LOAD/STORE INSTRUCTIONS *******/
 
-// THESE ARE UNTESTED!
 void
 CPU::B(uint32_t cond, int32_t label) {
     if (cond == AL || FLAGS.getData() == cond) {
@@ -1128,5 +1127,5 @@ CPU::CALL(Reg& arg) {
     LR.setType(Reg::TypeInfo::WIDTH32);
     LR.setData(pc + sizeof(uint32_t));
 
-    PC.setData(pc + arg.getData());
+    PC.setData(arg.getData());
 }
