@@ -10,6 +10,7 @@ struct Reg {
             WIDTH8  = 0,
             WIDTH16 = 1,
             WIDTH32 = 2,
+            UNUSED  = 3,
         };
 
         static TypeInfo chooseMaxWidth(Reg& arg1, Reg& arg2) {
@@ -24,8 +25,8 @@ struct Reg {
         TypeInfo getType() const;
         uint32_t getData() const;
 
-        void setType(TypeInfo type);
-        void setData(uint32_t data);
+        void setType(TypeInfo);
+        void setData(uint32_t);
 
     private:
         TypeInfo type;
@@ -42,6 +43,6 @@ struct Reg {
                 uint16_t w16_h;
             };
             uint32_t w32;
-        } data;
+        };
 };
 

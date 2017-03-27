@@ -14,23 +14,33 @@ class CPU {
     public:
         CPU(const vector<uint32_t>& program);
 
-        void execute();
+        int exec();
     private:
+        void execInstruction(uint32_t instruction);
+        void execExecutionInstruction(uint32_t instruction);
+        void execLoadStoreInstruction(uint32_t instruction);
+        void execBranchInstruction(uint32_t instruction);
+
+        // EXECUTION
         void add(Reg& dst, Reg& op1, Reg& op2);
         void mov(Reg& dst, uint32_t imm);
         void mov(Reg& dst, Reg& src);
         void trn(Reg& arg, Reg::TypeInfo type);
 
+        // LOAD/STORE
         void ldr(Reg& dst, Reg& src, Reg::TypeInfo type);
-        void str(Reg& src, Reg& dst);
+        void str(Reg& dst, Reg& src);
 
+        // BRANCH
         void branch(uint32_t cond, uint32_t label);
         void branch_indirect(uint32_t cond, Reg& arg);
         void branch_and_link(uint32_t label);
         void call(Reg& arg);
 
+        // Memory
         Memory mem;
 
+        // Registers
         union {
             struct {
                 Reg r0;

@@ -3,13 +3,19 @@
 void
 Memory::loadProgram(const vector<uint32_t>& program) {
     // load program starting at address 0
-    for (int i = 0; i < program.size(); i++) {
+    int i;
+    for (i = 0; i < program.size(); i++) {
         uint32_t word = program[i];
         mem[4*i + 0] = (word >>  0) & 0xFF;
         mem[4*i + 1] = (word >>  8) & 0xFF;
         mem[4*i + 2] = (word >> 16) & 0xFF;
         mem[4*i + 3] = (word >> 24) & 0xFF;
     }
+
+    mem[4*i + 0] = ~0;
+    mem[4*i + 1] = ~0;
+    mem[4*i + 2] = ~0;
+    mem[4*i + 3] = ~0;
 }
 
 uint8_t
