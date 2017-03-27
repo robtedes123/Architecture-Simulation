@@ -206,8 +206,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1111;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				word = parse_imm(word,arg[3], 8);
-				word <<= 7;
+				word = parse_imm(word,arg[3], 15);
 			}
 			break;
 		//LSL
@@ -225,8 +224,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b10001;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				word = parse_imm(word,arg[3], 8);
-				word <<= 7;
+				word = parse_imm(word,arg[3], 15);
 			}
 			break;
 		//ASR
