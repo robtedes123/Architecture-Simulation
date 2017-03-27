@@ -13,7 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
-	// file_out_bin.open(filename_out_bin, ofstream::binary);
+	file_out_bin.open(filename_out_bin, ofstream::binary);
 
 	if(file_in.is_open())
 	{
