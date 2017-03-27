@@ -58,23 +58,44 @@ uint32_t Assembler::parse_line(string line)
 	switch(s_mapTypeValues[arg[0]])
 	{
 		case 0:
-			if(!(arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
+			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
+			{
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+			}
+			else
 			{
 				word += 0b1;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
 			}
 			break;
 		case 1:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
 				word += 0b10;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				word = parse_reg(word,arg[3]);
+				//add padding
 			}
 			else
 			{
 				word += 0b11;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			}
 			break;
 		case 2:
 				word += 0b100;
+				word = parse_reg(word,arg[1]);
+				word = parse_reg(word,arg[2]);
+				//parse immediate
+				//add padding
 			break;
 		case 3:
 			if((arg[2].at(0) == 'R' || arg[1].at(0) == 'r'))
