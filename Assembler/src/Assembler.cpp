@@ -28,16 +28,16 @@ void Assembler::parse()
 			{
 				cout << "Unable to open output file" << endl;
 			}
-			// if(file_out_bin.is_open())
-			// {
-			//
-			//  	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
-			//
-			// }
-			// else
-			// {
-			// 	cout << "Unable to open binary output file" << endl;
-			// }
+			if(file_out_bin.is_open())
+			{
+
+			 	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
+
+			}
+			else
+			{
+				cout << "Unable to open binary output file" << endl;
+			}
 		}
 	}
 	else
