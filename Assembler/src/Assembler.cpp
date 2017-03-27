@@ -13,7 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
-	file_out_bin.open(filename_out_bin, ios::out | ios::binary);
+	file_out_bin.open(filename_out_bin, ofstream::binary);
 
 	if(file_in.is_open())
 	{
@@ -31,6 +31,7 @@ void Assembler::parse()
 			if(file_out_bin.is_open())
 			{
 
+				file_out_bin.write((char*)&bit_string, sizeof(bit_string));
 
 			}
 			else
