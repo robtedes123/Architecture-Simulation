@@ -281,7 +281,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word = word << 10;
 			break;
 		//UDIV
 		case 16:
@@ -289,7 +289,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word = word << 10;
 			break;
 		//MOD
 		case 17:
@@ -297,7 +297,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word = word << 10;
 			break;
 		//UMOD
 		case 18:
@@ -305,7 +305,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word = word << 10;
 			break;
 		//MOV
 		case 19:
@@ -314,22 +314,29 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b11011;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//add padding
+				word = word << 15;
 			}
 			else
 			{
 				word += 0b11100;
 				word = parse_reg(word,arg[1]);
-				word = parse_imm(word,arg[2], 22);
-				//add padding
+				word = parse_imm(word,arg[2], 20);
 			}
 			break;
 		//TRN
 		case 20:
 			word += 0b11101;
 			word = parse_reg(word,arg[1]);
-			//parse size
-			//add padding
+			if(stoi(arg[2]) == 16)
+			{
+				word += 0b1;
+			}
+			else if(stoi(arg[2]) == 32)
+			{
+				word += 0b10;
+			}
+			word = word << 20;
+
 			break;
 		//LDR
 		case 21:
