@@ -373,8 +373,8 @@ uint32_t Assembler::parse_line(string line)
 		//BL
 		case 25:
 			word += 0b1010;
+			word = word << 24;
 			word += stoi(arg[1]);
-			word = word << 28;
 			break;
 		//CALL
 		case 26:
