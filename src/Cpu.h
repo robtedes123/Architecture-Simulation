@@ -58,9 +58,9 @@ class CPU {
         void STR(Reg& dst, Reg& src);
 
         // BRANCH
-        void B(uint32_t cond, uint32_t label);
+        void B(uint32_t cond, int32_t label);
         void BI(uint32_t cond, Reg& arg);
-        void BL(uint32_t label);
+        void BL(int32_t label);
         void CALL(Reg& arg);
 
         // FLAGS
