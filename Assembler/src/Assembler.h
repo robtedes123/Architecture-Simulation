@@ -44,15 +44,17 @@ void enumerate();
 class Assembler 
 {
 	public:
-		Assembler(const char* fname_in, const char* fname_out);
+		Assembler(const char* fname_in, const char* fname_out, const char* fname_out_bin);
 		void parse();
 	private:
 		static uint32_t parse_line(string line);
-		uint32_t parse_reg(uint32_t word, string arg);
+		static uint32_t parse_reg(uint32_t word, string arg);
 
 		const char* filename_in;
 		const char* filename_out;
+		const char* filename_out_bin;
 		ofstream file_out;
+		ofstream file_out_bin;
 		ifstream file_in;
 };
 

@@ -1,9 +1,10 @@
 #include "Assembler.h"
 
-Assembler::Assembler(const char* fname_in, const char* fname_out)
+Assembler::Assembler(const char* fname_in, const char* fname_out, const char* fname_out_bin)
 {
 	filename_in = fname_in;
 	filename_out = fname_out;
+	filename_out_bin = fname_out_bin;
 }
 
 void Assembler::parse()
@@ -12,6 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
+	file_out_bin.open(filename_out_bin, ios::out | ios::binary);
 
 	if(file_in.is_open())
 	{
@@ -26,6 +28,15 @@ void Assembler::parse()
 			{
 				cout << "Unable to open output file" << endl;
 			}
+			if(file_out_bin.is_open())
+			{
+
+
+			}
+			else
+			{
+				cout << "Unable to open binary output file" << endl;
+			}
 		}
 	}
 	else
@@ -35,6 +46,7 @@ void Assembler::parse()
 
 	file_in.close();
 	file_out.close();
+	file_out_bin.close();
 
 }
 
@@ -227,7 +239,7 @@ uint32_t Assembler::parse_line(string line)
 
 uint32_t Assembler::parse_reg(uint32_t word, string arg)
 {
-	word << 5;
+	word = word << 5;
 
 	switch(stoi(arg.substr(1, 2)))
 	{

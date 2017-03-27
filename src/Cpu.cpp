@@ -153,7 +153,7 @@ CPU::execExecutionInstruction(uint32_t instruction) {
         }
         case OP_CMPI : {
             const uint32_t op1 = EB(instruction, 25, 20);
-            const uint32_t imm = EB(instruction, 20, 0);
+            const int32_t imm = SE(EB(instruction, 20, 0), 20);
             printf("CMP r%d imm=%d\n", op1, imm);
             CMP(reg[op1], imm);
             break;
@@ -191,8 +191,8 @@ CPU::execExecutionInstruction(uint32_t instruction) {
             break;
         }
         case OP_NOT : {
-            const uint32_t op1 = (instruction >> 20) & 0x1F;
-            const uint32_t op2 = (instruction >> 15) & 0x1F;
+            const uint32_t op1 = EB(instruction, 25, 20);
+            const uint32_t op2 = EB(instruction, 20, 15);
             printf("NOT r%d r%d\n", op1, op2);
             NOT(reg[op1], reg[op2]);
             break;
@@ -625,9 +625,9 @@ CPU::CMP(Reg& arg1, Reg& arg2) {
 }
 
 void
-CPU::CMP(Reg& arg1, uint32_t imm) {
+CPU::CMP(Reg& arg1, int32_t imm) {
     uint32_t a1_data = arg1.getData();
-    uint32_t a2_data = imm;
+    int32_t a2_data = imm;
 
     if (a1_data > a2_data) {
         FLAGS.setData(GT);
@@ -1096,7 +1096,6 @@ CPU::STR(Reg& dst, Reg& src) {
 
 /******* LOAD/STORE INSTRUCTIONS *******/
 
-// THESE ARE UNTESTED!
 void
 CPU::B(uint32_t cond, int32_t label) {
     if (cond == AL || FLAGS.getData() == cond) {
@@ -1128,5 +1127,5 @@ CPU::CALL(Reg& arg) {
     LR.setType(Reg::TypeInfo::WIDTH32);
     LR.setData(pc + sizeof(uint32_t));
 
-    PC.setData(pc + arg.getData());
+    PC.setData(arg.getData());
 }
