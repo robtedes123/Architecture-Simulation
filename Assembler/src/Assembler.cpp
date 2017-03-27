@@ -13,7 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
-	file_out_bin.open(filename_out_bin, ofstream::binary);
+	// file_out_bin.open(filename_out_bin, ofstream::binary);
 
 	if(file_in.is_open())
 	{
@@ -28,16 +28,16 @@ void Assembler::parse()
 			{
 				cout << "Unable to open output file" << endl;
 			}
-			if(file_out_bin.is_open())
-			{
-			
-			 	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
-		
-			}
-			else
-			{
-				cout << "Unable to open binary output file" << endl;
-			}
+			// if(file_out_bin.is_open())
+			// {
+			//
+			//  	file_out_bin.write((char*)&bit_string, sizeof(bit_string));
+			//
+			// }
+			// else
+			// {
+			// 	cout << "Unable to open binary output file" << endl;
+			// }
 		}
 	}
 	else
@@ -75,10 +75,11 @@ uint32_t Assembler::parse_line(string line)
 		case 0:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
 			{
+				word <<= 7;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -86,7 +87,6 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 15);
-				//add padding
 			}
 			break;
 		//SUB
@@ -97,7 +97,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -105,7 +105,6 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 15);
-				//add padding
 			}
 			break;
 		//RSUB
@@ -114,7 +113,6 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[3]);
 			word = parse_imm(word,arg[2], 15);
-			//add padding
 			break;
 		//CMP
 		case 3:
@@ -123,14 +121,13 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b101;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//add padding
+				word <<= 15;
 			}
 			else
 			{
 				word += 0b110;
 				word = parse_reg(word,arg[1]);
 				word = parse_imm(word,arg[2], 20);
-				//add padding
 			}
 			break;
 		//AND
@@ -141,15 +138,14 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
 				word += 0b1000;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				word = parse_imm(word,arg[3], 20);
-				//add padding
+				word = parse_imm(word,arg[3], 15);
 			}
 			break;
 		//OR
@@ -160,7 +156,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -168,7 +164,6 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 15);
-				//add padding
 			}
 			break;
 		//NOT
@@ -176,7 +171,7 @@ uint32_t Assembler::parse_line(string line)
 			word += 0b1011;
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
-			//add padding
+			word <<= 15;
 			break;
 		//XOR
 		case 7:
@@ -186,7 +181,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -194,7 +189,6 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 15);
-				//add padding
 			}
 			break;
 		//LSR
@@ -205,7 +199,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -213,7 +207,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 8);
-				//add padding
+				word <<= 7;
 			}
 			break;
 		//LSL
@@ -224,7 +218,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_reg(word,arg[3]);
-				//add padding
+				word <<= 10;
 			}
 			else
 			{
@@ -232,7 +226,7 @@ uint32_t Assembler::parse_line(string line)
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
 				word = parse_imm(word,arg[3], 8);
-				//add padding
+				word <<= 7;
 			}
 			break;
 		//ASR
@@ -241,7 +235,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word <<= 10;
 			break;
 		//ROR
 		case 11:
@@ -249,7 +243,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word <<= 10;
 			break;
 		//ROL
 		case 12:
@@ -257,7 +251,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word <<= 10;
 			break;
 		//MUL
 		case 13:
@@ -265,7 +259,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word <<= 10;
 			break;
 		//UMUL
 		case 14:
@@ -273,7 +267,7 @@ uint32_t Assembler::parse_line(string line)
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[2]);
 			word = parse_reg(word,arg[3]);
-			//add padding
+			word <<= 10;
 			break;
 		//DIV
 		case 15:
