@@ -13,7 +13,7 @@ void Assembler::parse()
 	uint32_t bit_string;
 	file_in.open(filename_in);
 	file_out.open(filename_out);
-	// file_out_bin.open(filename_out_bin, ofstream::binary);
+	file_out_bin.open(filename_out_bin, ofstream::binary);
 
 	if(file_in.is_open())
 	{
@@ -362,7 +362,7 @@ uint32_t Assembler::parse_line(string line)
 		case 23:
 			word += 0b1000;
 			word = parse_cond(word, arg[1]);
-			// encode label
+			word += stoi(arg[2]);
 			word = word << 24;
 			break;
 		//BI
@@ -375,7 +375,7 @@ uint32_t Assembler::parse_line(string line)
 		//BL
 		case 25:
 			word += 0b1010;
-			// encode label
+			word += stoi(arg[1]);
 			word = word << 28;
 			break;
 		//CALL
