@@ -361,7 +361,7 @@ uint32_t Assembler::parse_line(string line)
 			word += 0b1000;
 			word = parse_cond(word, arg[1]);
 			word = word << 24;
-			word += stoi("-31") & 0xFFFFFF;
+			word += stoi(arg[2]) & 0xFFFFFF;
 			break;
 		//BI
 		case 24:
