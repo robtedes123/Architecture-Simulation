@@ -70,6 +70,7 @@ uint32_t Assembler::parse_line(string line)
 
 	switch(s_mapTypeValues[arg[0]])
 	{
+		//TO:DO shift the type and opcode values and add padding
 		//ADD
 		case 0:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
@@ -103,7 +104,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b11;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 15);
 				//add padding
 			}
 			break;
@@ -112,7 +113,7 @@ uint32_t Assembler::parse_line(string line)
 			word += 0b100;
 			word = parse_reg(word,arg[1]);
 			word = parse_reg(word,arg[3]);
-			//parse immediate
+			word = parse_imm(word,arg[2], 15);
 			//add padding
 			break;
 		//CMP
@@ -128,7 +129,7 @@ uint32_t Assembler::parse_line(string line)
 			{
 				word += 0b110;
 				word = parse_reg(word,arg[1]);
-				//parse immediate
+				word = parse_imm(word,arg[2], 20);
 				//add padding
 			}
 			break;
@@ -147,7 +148,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1000;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 20);
 				//add padding
 			}
 			break;
@@ -166,7 +167,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1010;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 15);
 				//add padding
 			}
 			break;
@@ -192,7 +193,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1101;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 15);
 				//add padding
 			}
 			break;
@@ -211,7 +212,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b1111;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 8);
 				//add padding
 			}
 			break;
@@ -230,7 +231,7 @@ uint32_t Assembler::parse_line(string line)
 				word += 0b10001;
 				word = parse_reg(word,arg[1]);
 				word = parse_reg(word,arg[2]);
-				//parse immediate
+				word = parse_imm(word,arg[3], 8);
 				//add padding
 			}
 			break;
@@ -319,7 +320,7 @@ uint32_t Assembler::parse_line(string line)
 			{
 				word += 0b11100;
 				word = parse_reg(word,arg[1]);
-				//parse immediate
+				word = parse_imm(word,arg[2], 22);
 				//add padding
 			}
 			break;
