@@ -70,7 +70,6 @@ uint32_t Assembler::parse_line(string line)
 
 	switch(s_mapTypeValues[arg[0]])
 	{
-		//TO:DO shift the type and opcode values and add padding
 		//ADD
 		case 0:
 			if((arg[3].at(0) == 'R' || arg[3].at(0) == 'r'))
@@ -507,7 +506,7 @@ uint32_t Assembler::parse_reg(uint32_t word, string arg)
 
 uint32_t Assembler::parse_imm(uint32_t word, string arg, int shift)
 {
-	int temp = stoi(arg);
+	int temp = stoi(arg) & 0xFFFFFF;
 	word = word << shift;
 	return word += temp;
 }
