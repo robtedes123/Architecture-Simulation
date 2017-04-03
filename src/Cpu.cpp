@@ -3,6 +3,8 @@
 
 #include <cstdio>
 #include <cassert>
+#include <iostream>
+#include <bitset>
 
 CPU::CPU(const vector<uint32_t>& program) {
     // zero out registers
@@ -44,6 +46,10 @@ CPU::run() {
 //            mem.read(568, &dummy_cycles),
 //            mem.read(572, &dummy_cycles)
 //        );
+        printf("Next OP, Registers:\n");
+        for(int i = 0; i < 32 ;i++) {
+            cout << "Register " << i << ": " << bitset<32>(reg[i].getData()) << endl;
+        }        
     }
 }
 
