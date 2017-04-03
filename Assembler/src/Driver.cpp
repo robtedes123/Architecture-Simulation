@@ -2,8 +2,17 @@
 
 #include "Assembler.h"
 
+#include <iostream>
+
+using namespace std;
+
 int main(int argc, char* argv[])
 {
-	Assembler assembler(argv[1], argv[2], argv[3]);
-	assembler.parse();
+    if (argc < 3) {
+        cout << "Error: Invalid number of arguments" << endl;
+    } else {
+	    Assembler assembler(argv[1], argv[2]);
+	    assembler.parse();
+        assembler.write();
+    }
 }
