@@ -6,37 +6,37 @@ using namespace std;
 
 struct Reg {
     public:
-        enum class TypeInfo : uint32_t {
+        enum class Type : uint32_t {
             WIDTH8  = 0,
             WIDTH16 = 1,
             WIDTH32 = 2,
             UNUSED  = 3,
         };
 
-        static TypeInfo chooseMaxWidth(Reg& arg1, Reg& arg2) {
+        static Type chooseMaxWidth(Reg& arg1, Reg& arg2) {
             int a1_size = (int)arg1.getType();
             int a2_size = (int)arg2.getType();
             int max_size = a1_size >= a2_size ? a1_size : a2_size;
-            return (TypeInfo) max_size;
+            return (Type) max_size;
         }
 
-        static TypeInfo chooseMaxWidth(Reg& arg1, TypeInfo ti) {
+        static Type chooseMaxWidth(Reg& arg1, Type ti) {
             int a1_size = (int)arg1.getType();
             int a2_size = (int)ti;
             int max_size = a1_size >= a2_size ? a1_size : a2_size;
-            return (TypeInfo) max_size;
+            return (Type) max_size;
         }
 
         int width() const;
 
-        TypeInfo getType() const;
+        Type getType() const;
         uint32_t getData() const;
 
-        void setType(TypeInfo);
+        void setType(Type);
         void setData(uint32_t);
 
     private:
-        TypeInfo type;
+        Type type;
 
         union {
             union {

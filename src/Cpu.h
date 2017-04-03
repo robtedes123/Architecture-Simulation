@@ -3,7 +3,6 @@
 #include "Reg.h"
 #include "Mem.h"
 
-#include <array>
 #include <vector>
 
 #include <cstdint>
@@ -14,12 +13,13 @@ class CPU {
     public:
         CPU(const vector<uint32_t>& program);
 
-        int exec();
+        void run();
+
+        uint32_t cycles;
+
     private:
-        void execInstruction(uint32_t instruction);
-        void execExecutionInstruction(uint32_t instruction);
-        void execLoadStoreInstruction(uint32_t instruction);
-        void execBranchInstruction(uint32_t instruction);
+        uint32_t fetch();
+        void execute(uint32_t instruction);
 
         // EXECUTION
         void ADD(Reg& dst, Reg& op1, Reg& op2);
@@ -51,10 +51,10 @@ class CPU {
         void UMOD(Reg& dst, Reg& op1, Reg& op2);
         void MOV(Reg& dst, uint32_t imm);
         void MOV(Reg& dst, Reg& src);
-        void TRN(Reg& arg, Reg::TypeInfo type);
+        void TRN(Reg& arg, Reg::Type type);
 
         // LOAD/STORE
-        void LDR(Reg& dst, Reg& src, Reg::TypeInfo type);
+        void LDR(Reg& dst, Reg& src, Reg::Type type);
         void STR(Reg& dst, Reg& src);
 
         // BRANCH
@@ -64,15 +64,17 @@ class CPU {
         void CALL(Reg& arg);
 
         // FLAGS
-        const static auto AL = 0;
-        const static auto GT = 1;
-        const static auto LT = 2;
-        const static auto EQ = 3;
-        const static auto NE = 4;
-        const static auto OF = 5;
-        const static auto UF = 6;
-        const static auto CA = 7;
-        const static auto DZ = 8;
+        enum COND {
+            AL = 0,
+            GT = 1,
+            LT = 2,
+            EQ = 3,
+            NE = 4,
+            OF = 5,
+            UF = 6,
+            CA = 7,
+            DZ = 8,
+        };
 
         // Memory
         Memory mem;
@@ -113,7 +115,7 @@ class CPU {
                 Reg FLAGS;
                 Reg PC;
             };
-            array<Reg, 32> reg;
+            Reg reg[32];
         };
 };
 

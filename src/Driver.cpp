@@ -16,13 +16,13 @@ main(int argc, char** argv) {
     int sz_in_words = sz / sizeof(uint32_t);
 
     // read that many words from the file
-    vector<uint32_t> program2(sz_in_words);
-    fread(program2.data(), sizeof(uint32_t), sz_in_words, file);
+    vector<uint32_t> program(sz_in_words);
+    fread(program.data(), sizeof(uint32_t), sz_in_words, file);
 
     fclose(file);
 
-    CPU cpu(program2);
-    int num_cycles = cpu.exec();
+    CPU cpu(program);
+    cpu.run();
 
-    printf("num cycles = %d\n", num_cycles);
+    printf("num cycles = %d\n", cpu.cycles);
 }
