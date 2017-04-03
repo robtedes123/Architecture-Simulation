@@ -1064,11 +1064,10 @@ void
 CPU::LDR(Reg& dst, Reg& src, Reg::Type type) {
     assert(type != Reg::Type::UNUSED);
 
-    dst.setType(type);
-
     const uint32_t address = src.getData();
     uint32_t data = mem.read(address, &cycles);
 
+    dst.setType(type);
     dst.setData(data);
 
     printf("LOADED %d\n", dst.getData());
