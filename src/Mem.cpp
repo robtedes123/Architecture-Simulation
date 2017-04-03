@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+#ifdef CACHE
 void
 Cache::invalidate(uint32_t address) {
     const int idx = INDEX(address);
@@ -39,6 +40,7 @@ Cache::write(uint32_t address, Line line) {
 //    printf("line  : %x  %x  %x  %x\n", line.line[0], line.line[1], line.line[2], line.line[3]);
 //    printf("cache : %x  %x  %x  %x\n", l.line[0], l.line[1], l.line[2], l.line[3]);
 }
+#endif
 
 void
 Memory::loadProgram(const vector<uint32_t>& program) {
@@ -54,6 +56,7 @@ Memory::read(uint32_t address, uint32_t* cycles) {
     assert(address % sizeof(uint32_t) == 0);
     address /= 4;
 
+#ifdef CACHE
     Cache::Line line;
 
     bool hit = false;
@@ -89,6 +92,10 @@ Memory::read(uint32_t address, uint32_t* cycles) {
     }
 
     return line.line[Cache::Line::OFFSET(address)];
+#else
+    *cycles += RAM_DELAY;
+    return ram[address];
+#endif
 }
 
 void
@@ -98,11 +105,13 @@ Memory::write(uint32_t address, uint32_t data, uint32_t* cycles) {
 
     address /= 4;
 
+#ifdef CACHE
     // writethrough - no allocate
     for (auto& cache : caches) {
         *cycles += cache.DELAY;
         cache.invalidate(address);
     }
+#endif
 
     *cycles += RAM_DELAY;
     ram[address] = data;
