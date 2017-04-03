@@ -39,9 +39,6 @@ Memory::loadProgram(const vector<uint32_t>& program) {
         ram[i] = program[i];
         printf("%x\n", program[i]);
     }
-
-    // put a marker at end of program
-    ram[program.size()] = ~0;
 }
 
 uint32_t

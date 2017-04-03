@@ -64,7 +64,8 @@ enum TypeCode {
     B,
     BI,
     BL,
-    CALL
+    CALL,
+    HLT
 };
 
 static map<string, TypeCode> INSTRUCTIONS = {
@@ -95,6 +96,7 @@ static map<string, TypeCode> INSTRUCTIONS = {
     {"BI"   , BI},
     {"BL"   , BL},
     {"CALL" , CALL},
+    {"HLT"  , HLT},
     {"add"  , ADD},
     {"sub"  , SUB},
     {"rsub" , RSUB},
@@ -121,6 +123,7 @@ static map<string, TypeCode> INSTRUCTIONS = {
     {"b"    , B},
     {"bi"   , BI},
     {"bl"   , BL},
-    {"call" , CALL}
+    {"call" , CALL},
+    {"hlt"  , HLT}
 };
 

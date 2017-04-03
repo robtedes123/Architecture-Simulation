@@ -23,23 +23,19 @@ CPU::CPU(const vector<uint32_t>& program) {
 
 void
 CPU::run() {
-    while (!step());
+    while (!isHalted) {
+        step();
+    }
 }
 
-bool
+void
 CPU::step() {
     const uint32_t instruction = fetch();
-
-    // HALT
-    if (instruction == ~0)
-        return true;
 
     execute(instruction);
     cycles += 1;
 
     getchar();
-
-    return false;
 }
 
 uint32_t
@@ -60,6 +56,7 @@ CPU::execute(const uint32_t instruction) {
     const static auto EXECUTION = 0;
     const static auto LOADSTORE = 1;
     const static auto BRANCH    = 2;
+    const static auto SPECIAL   = 3;
 
     const int type = EB(instruction, 32, 30);
 
@@ -405,6 +402,11 @@ CPU::execute(const uint32_t instruction) {
                 }
             }
 
+            break;
+        }
+        case SPECIAL: {
+            printf("hlt\n");
+            HLT();
             break;
         }
     }
@@ -1068,12 +1070,16 @@ CPU::LDR(Reg& dst, Reg& src, Reg::Type type) {
     uint32_t data = mem.read(address, &cycles);
 
     dst.setData(data);
+
+    printf("LOADED %d\n", dst.getData());
 }
 
 void
 CPU::STR(Reg& dst, Reg& src) {
     const uint32_t address = dst.getData();
     const uint32_t data = src.getData();
+
+    printf("STORED %d\n", data);
 
     uint32_t curr = mem.read(address, &cycles);
     uint64_t mask = (1 << (8*src.width())) - 1;
@@ -1117,4 +1123,11 @@ CPU::CALL(Reg& arg) {
     LR.setData(pc);
 
     PC.setData(arg.getData());
+}
+
+/******* SPECIAL INSTRUCTIONS *******/
+
+void
+CPU::HLT() {
+    isHalted = true;
 }

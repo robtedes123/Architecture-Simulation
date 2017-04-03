@@ -16,8 +16,11 @@ class CPU {
         // Execute the program
         void run();
 
-        // Step program one instruction (returns true if program is done)
-        bool step();
+        // Step program one instruction
+        void step();
+
+        // True if the program has finished running
+        bool isHalted = false;
 
         // Cycle Counter
         uint32_t cycles;
@@ -108,6 +111,8 @@ class CPU {
         void BI(uint32_t cond, Reg& arg);
         void BL(int32_t label);
         void CALL(Reg& arg);
+
+        void HLT();
 
         // FLAGS
         enum COND {

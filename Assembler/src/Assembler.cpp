@@ -422,6 +422,10 @@ uint32_t Assembler::parse_line(string& line)
                     reg << 23;  // REG
         }
 
+        case HLT: {
+            return 0b11 << 30; // TYPE
+        }
+
         default: {
             cout << "Line " << line_num << ": invalid instruction '" << arg[0] << "'" << endl;
             exit(-1);
