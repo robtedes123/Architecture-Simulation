@@ -25,6 +25,13 @@ void
 CPU::run() {
     while (!isHalted) {
         step();
+        uint32_t dummy_cycles;
+        printf("%d %d %d %d\n",
+                mem.read(512, &dummy_cycles),
+                mem.read(516, &dummy_cycles),
+                mem.read(520, &dummy_cycles),
+                mem.read(524, &dummy_cycles)
+        );
     }
 }
 
@@ -609,6 +616,8 @@ CPU::CMP(Reg& arg1, Reg& arg2) {
     uint32_t a1_data = arg1.getData();
     uint32_t a2_data = arg2.getData();
 
+    printf("%d %d\n", a1_data, a2_data);
+
     uint32_t flags = 0;
 
     if (a1_data > a2_data)  flags |= GT;
@@ -1069,16 +1078,12 @@ CPU::LDR(Reg& dst, Reg& src, Reg::Type type) {
 
     dst.setType(type);
     dst.setData(data);
-
-    printf("LOADED %d\n", dst.getData());
 }
 
 void
 CPU::STR(Reg& dst, Reg& src) {
     const uint32_t address = dst.getData();
     const uint32_t data = src.getData();
-
-    printf("STORED %d\n", data);
 
     uint32_t curr = mem.read(address, &cycles);
     uint64_t mask = (1 << (8*src.width())) - 1;

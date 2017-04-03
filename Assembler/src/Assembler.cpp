@@ -78,12 +78,16 @@ uint32_t Assembler::parse_line(string& line)
 	string arg[4];
 	size_t start = line.find_first_not_of(" \t");
 	size_t end = 0;
-
 	int i = 0;
 	while(start != string::npos){
 		end = line.find(" ", start);
 		arg[i] = line.substr(start, end - start);
 		start = line.find_first_not_of(" ", end);
+
+        // Allow comments at the end of lines
+        if (line[start] == '/') {
+            break;
+        }
 		i++;
 	}
 

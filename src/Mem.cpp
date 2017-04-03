@@ -65,15 +65,12 @@ Memory::read(uint32_t address, uint32_t* cycles) {
         hit = cache.read(address, &line);
 
         if (hit) {
-            printf("HIT\n");
             break;
         }
     }
 
     // Read line ram if not in cache
     if (!hit) {
-        printf("MISS\n");
-
         *cycles += RAM_DELAY;
         for (int word = 0; word < WORDS_PER_LINE; word++) {
             line.line[word] = ram[address + word];
