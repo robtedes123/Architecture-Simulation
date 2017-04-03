@@ -1100,7 +1100,7 @@ CPU::B(uint32_t cond, int32_t label) {
 
 void
 CPU::BI(uint32_t cond, Reg& arg) {
-    if (FLAGS.getData() & cond == cond) {
+    if ((FLAGS.getData() & cond) == cond) {
         PC.setData(arg.getData());
     }
 }

@@ -1,5 +1,7 @@
 EXE := arch-sim
 
+CXX = clang++
+
 SRCDIR := src
 OBJDIR := .obj
 

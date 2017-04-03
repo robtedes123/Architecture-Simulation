@@ -1,4 +1,9 @@
     mov r0 128
+    cmp r0 0
+fill:
+
+done_fill:
+    mov r0 128
     mov r1 256
     str r0 r1
     add r2 r1 4

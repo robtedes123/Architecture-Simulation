@@ -11,6 +11,7 @@ using namespace std;
 
 // CACHE CONFIGURATION
 const auto WORDS_PER_LINE = 4;
+const auto LOG2_WORDS_PER_LINE = 2;
 
 // RAM CONFIGURATION
 const auto RAM_SIZE  = 0x2000/sizeof(uint32_t);
@@ -30,8 +31,8 @@ class Cache
                 return EB(address, OFFSET_BITS_HI, OFFSET_BITS_LO);
             }
 
-            const static auto OFFSET_BITS_LO = 0;
-            const static auto OFFSET_BITS_HI = WORDS_PER_LINE == 1 ? 1 : OFFSET_BITS_LO + (uint32_t)log2(WORDS_PER_LINE);
+            static const auto OFFSET_BITS_LO = 0;
+            static const auto OFFSET_BITS_HI = WORDS_PER_LINE == 1 ? 1 : OFFSET_BITS_LO + LOG2_WORDS_PER_LINE;
         };
 
         Cache(int numLines, int delay) :
