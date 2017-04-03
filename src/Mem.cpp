@@ -37,6 +37,7 @@ Memory::loadProgram(const vector<uint32_t>& program) {
     // load program starting at address 0
     for (int i = 0; i < program.size(); i++) {
         ram[i] = program[i];
+        printf("%x\n", program[i]);
     }
 
     // put a marker at end of program

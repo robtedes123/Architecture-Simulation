@@ -16,6 +16,9 @@ class CPU {
         // Execute the program
         void run();
 
+        // Step program one instruction (returns true if program is done)
+        bool step();
+
         // Cycle Counter
         uint32_t cycles;
 
@@ -109,14 +112,14 @@ class CPU {
         // FLAGS
         enum COND {
             AL = 0,
-            GT = 1,
-            LT = 2,
-            EQ = 3,
-            NE = 4,
-            OF = 5,
-            UF = 6,
-            CA = 7,
-            DZ = 8,
+            GT = 1 << 0,
+            LT = 1 << 1,
+            EQ = 1 << 2,
+            NE = 1 << 3,
+            OF = 1 << 4,
+            UF = 1 << 5,
+            CA = 1 << 6,
+            DZ = 1 << 7,
         };
 };
 

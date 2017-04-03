@@ -23,18 +23,23 @@ CPU::CPU(const vector<uint32_t>& program) {
 
 void
 CPU::run() {
-    while (true) {
-        const uint32_t instruction = fetch();
+    while (!step());
+}
 
-        // HALT
-        if (instruction == ~0) {
-            break;
-        }
+bool
+CPU::step() {
+    const uint32_t instruction = fetch();
 
-        execute(instruction);
+    // HALT
+    if (instruction == ~0)
+        return true;
 
-        cycles += 1;
-    }
+    execute(instruction);
+    cycles += 1;
+
+    getchar();
+
+    return false;
 }
 
 uint32_t
@@ -351,8 +356,8 @@ CPU::execute(const uint32_t instruction) {
                     break;
                 }
                 case OP_STR: {
-                    const uint32_t dst = EB(instruction, 29, 24);
-                    const uint32_t src = EB(instruction, 24, 19);
+                    const uint32_t src = EB(instruction, 29, 24);
+                    const uint32_t dst = EB(instruction, 24, 19);
                     printf("str r%d r%d\n", src, dst);
                     STR(reg[dst], reg[src]);
                     break;
@@ -373,15 +378,15 @@ CPU::execute(const uint32_t instruction) {
             //TODO: check label sign extension
             switch (op) {
                 case OP_B: {
-                    const uint32_t cond = EB(instruction, 28, 24);
-                    int32_t label = SE(EB(instruction, 24, 0), 24);
+                    const uint32_t cond = EB(instruction, 28, 20);
+                    int32_t label = SE(EB(instruction, 24, 0), 20);
                     printf("B cond=%d %d\n", cond, label);
                     B(cond, label);
                     break;
                 }
                 case OP_BI: {
-                    const uint32_t cond = EB(instruction, 28, 24);
-                    const uint32_t idx  = EB(instruction, 24, 19);
+                    const uint32_t cond = EB(instruction, 28, 20);
+                    const uint32_t idx  = EB(instruction, 20, 15);
                     printf("BI cond=%d r%d\n", cond, idx);
                     BI(cond, reg[idx]);
                     break;
@@ -602,31 +607,29 @@ CPU::CMP(Reg& arg1, Reg& arg2) {
     uint32_t a1_data = arg1.getData();
     uint32_t a2_data = arg2.getData();
 
-    if (a1_data > a2_data) {
-        FLAGS.setData(GT);
-    } else if (a1_data < a2_data) {
-        FLAGS.setData(LT);
-    } else if (a1_data == a2_data) {
-        FLAGS.setData(EQ);
-    } else if (a1_data != a2_data) {
-        FLAGS.setData(NE);
-    }
+    uint32_t flags = 0;
+
+    if (a1_data > a2_data)  flags |= GT;
+    if (a1_data < a2_data)  flags |= LT;
+    if (a1_data == a2_data) flags |= EQ;
+    if (a1_data != a2_data) flags |= NE;
+
+    FLAGS.setData(flags);
 }
 
 void
 CPU::CMP(Reg& arg1, int32_t imm) {
     uint32_t a1_data = arg1.getData();
-    int32_t a2_data = imm;
+    uint32_t a2_data = (uint32_t)imm;
 
-    if (a1_data > a2_data) {
-        FLAGS.setData(GT);
-    } else if (a1_data < a2_data) {
-        FLAGS.setData(LT);
-    } else if (a1_data == a2_data) {
-        FLAGS.setData(EQ);
-    } else if (a1_data != a2_data) {
-        FLAGS.setData(NE);
-    }
+    uint32_t flags = 0;
+
+    if (a1_data > a2_data)  flags |= GT;
+    if (a1_data < a2_data)  flags |= LT;
+    if (a1_data == a2_data) flags |= EQ;
+    if (a1_data != a2_data) flags |= NE;
+
+    FLAGS.setData(flags);
 }
 
 void
@@ -1084,14 +1087,14 @@ CPU::STR(Reg& dst, Reg& src) {
 
 void
 CPU::B(uint32_t cond, int32_t label) {
-    if (cond == AL || FLAGS.getData() == cond) {
+    if ((FLAGS.getData() & cond) == cond) {
         PC.setData(PC.getData() + label);
     }
 }
 
 void
 CPU::BI(uint32_t cond, Reg& arg) {
-    if (cond == AL || FLAGS.getData() == cond) {
+    if (FLAGS.getData() & cond == cond) {
         PC.setData(arg.getData());
     }
 }
