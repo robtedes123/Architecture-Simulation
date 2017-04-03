@@ -25,12 +25,17 @@ class Cache
             bool valid;
             uint32_t tag;
             uint32_t line[WORDS_PER_LINE];
+
+            static uint32_t OFFSET(uint32_t address) {
+                return EB(address, OFFSET_BITS_HI, OFFSET_BITS_LO);
+            }
+
+            const static auto OFFSET_BITS_LO = 0;
+            const static auto OFFSET_BITS_HI = WORDS_PER_LINE == 1 ? 1 : OFFSET_BITS_LO + (uint32_t)log2(WORDS_PER_LINE);
         };
 
         Cache(int numLines, int delay) :
-            OFFSET_BITS_LO(0),
-            OFFSET_BITS_HI(OFFSET_BITS_LO + log2(WORDS_PER_LINE)),
-            INDEX_BITS_LO(OFFSET_BITS_HI),
+            INDEX_BITS_LO(Line::OFFSET_BITS_HI),
             INDEX_BITS_HI(INDEX_BITS_LO + log2(numLines)),
             TAG_BITS_LO(INDEX_BITS_HI),
             TAG_BITS_HI(32),
@@ -45,10 +50,6 @@ class Cache
         bool read(uint32_t address, Line* line);
         void write(uint32_t address, Line line);
 
-        uint32_t OFFSET(uint32_t address) {
-            return EB(address, OFFSET_BITS_HI, OFFSET_BITS_LO);
-        }
-
         uint32_t INDEX(uint32_t address) {
             return EB(address, INDEX_BITS_HI, INDEX_BITS_LO);
         }
@@ -60,8 +61,6 @@ class Cache
         const uint32_t DELAY;
 
     private:
-        const int OFFSET_BITS_LO;
-        const int OFFSET_BITS_HI;
         const int INDEX_BITS_LO;
         const int INDEX_BITS_HI;
         const int TAG_BITS_LO;
@@ -85,8 +84,5 @@ class Memory
         vector<Cache> caches = {
             Cache(128, 2), // L1: 128 lines, 2 cycle delay
         };
-
-    private:
-        Cache::Line readLine(uint32_t address, uint32_t* cycles);
 };
 

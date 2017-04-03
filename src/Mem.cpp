@@ -17,8 +17,13 @@ Cache::read(uint32_t address, Line* line) {
     const uint32_t idx = INDEX(address);
     const uint32_t tag = TAG(address);
 
+//    printf("index = %d\n", idx);
+//    printf("tag   = %d\n", tag);
+//    Cache::Line l = lines[idx];
+//    printf("cache : %x  %x  %x  %x\n", l.line[0], l.line[1], l.line[2], l.line[3]);
+
     if (lines[idx].tag == tag && lines[idx].valid) {
-        *line = line[idx];
+        *line = lines[idx];
         return true;
     } else {
         return false;
@@ -28,8 +33,11 @@ Cache::read(uint32_t address, Line* line) {
 void
 Cache::write(uint32_t address, Line line) {
     const uint32_t idx = INDEX(address);
-
     lines[idx] = line;
+
+//    Cache::Line l = lines[idx];
+//    printf("line  : %x  %x  %x  %x\n", line.line[0], line.line[1], line.line[2], line.line[3]);
+//    printf("cache : %x  %x  %x  %x\n", l.line[0], l.line[1], l.line[2], l.line[3]);
 }
 
 void
@@ -37,21 +45,61 @@ Memory::loadProgram(const vector<uint32_t>& program) {
     // load program starting at address 0
     for (int i = 0; i < program.size(); i++) {
         ram[i] = program[i];
-        printf("%x\n", program[i]);
     }
 }
 
 uint32_t
 Memory::read(uint32_t address, uint32_t* cycles) {
-    address /= sizeof(uint32_t);
+    // Unaligned read
+    assert(address % sizeof(uint32_t) == 0);
+    address /= 4;
 
-    *cycles += RAM_DELAY;
-    return ram[address];
+    Cache::Line line;
+
+    bool hit = false;
+
+    int i;
+    for (i = 0; i < caches.size(); i++) {
+        Cache& cache = caches[i];
+        *cycles += cache.DELAY;
+        hit = cache.read(address, &line);
+
+        if (hit) {
+            printf("HIT\n");
+            break;
+        }
+    }
+
+    // Read line ram if not in cache
+    if (!hit) {
+        printf("MISS\n");
+
+        *cycles += RAM_DELAY;
+        for (int word = 0; word < WORDS_PER_LINE; word++) {
+            line.line[word] = ram[address + word];
+        }
+
+        line.valid = true;
+    }
+
+    // Writeback into caches
+    for (i--; i >= 0; i--) {
+        Cache& cache = caches[i];
+        *cycles += cache.DELAY;
+
+        line.tag = cache.TAG(address);
+        cache.write(address, line);
+    }
+
+    return line.line[Cache::Line::OFFSET(address)];
 }
 
 void
 Memory::write(uint32_t address, uint32_t data, uint32_t* cycles) {
-    address /= sizeof(uint32_t);
+    // Unaligned write
+    assert(address % sizeof(uint32_t) == 0);
+
+    address /= 4;
 
     // writethrough - no allocate
     for (auto& cache : caches) {
@@ -63,35 +111,3 @@ Memory::write(uint32_t address, uint32_t data, uint32_t* cycles) {
     ram[address] = data;
 }
 
-//Cache::Line
-//Memory::readLine(uint32_t address, uint32_t* cycles) {
-//    Cache::Line line;
-//    bool hit;
-//
-//    int i;
-//    for (i = 0; i < caches.size(); i++) {
-//        auto& cache = caches[i];
-//
-//        *cycles += cache.DELAY;
-//        hit = cache.read(address, &line);
-//
-//        if (hit) {
-//            printf("HIT");
-//            break;
-//        }
-//    }
-//
-//    if (!hit) {
-//        *cycles += RAM_DELAY;
-//        byte = ram[address];
-//    }
-//
-//    for (i--; i >= 0; i--) {
-//        auto& cache = caches[i];
-//
-//        *cycles += cache.DELAY;
-//        cache.write(address, line);
-//    }
-//
-//    return byte;
-//}
