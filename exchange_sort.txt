@@ -1,5 +1,5 @@
     mov r0 512   // r0 = num
-    mov r1 4     // r1 = numLength
+    mov r1 16     // r1 = numLength
     sub r2 r1 1  // r2 = numLength - 1
     mov r3 4     // r3 = data width
 
