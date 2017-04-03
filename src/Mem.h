@@ -78,9 +78,6 @@ class Memory
         uint32_t read(uint32_t address, uint32_t* cycles);
         void write(uint32_t address, uint32_t data, uint32_t* cycles);
 
-    private:
-        Cache::Line readLine(uint32_t address, uint32_t* cycles);
-
         // RAM
         vector<uint32_t> ram = vector<uint32_t>(RAM_SIZE);
 
@@ -88,5 +85,8 @@ class Memory
         vector<Cache> caches = {
             Cache(128, 2), // L1: 128 lines, 2 cycle delay
         };
+
+    private:
+        Cache::Line readLine(uint32_t address, uint32_t* cycles);
 };
 
