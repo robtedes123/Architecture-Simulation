@@ -46,12 +46,7 @@ CPU::fetch() {
     PC.setData(address + sizeof(uint32_t));
 
     // Fetch instruction from memory
-    uint32_t instruction = 0;
-    for (int i = 0; i < sizeof(uint32_t); i++) {
-        instruction |= mem.read(address+i, &cycles) << (8*i);
-    }
-
-    return instruction;
+    return mem.read(address, &cycles);
 }
 
 void
@@ -1067,11 +1062,7 @@ CPU::LDR(Reg& dst, Reg& src, Reg::Type type) {
     dst.setType(type);
 
     const uint32_t address = src.getData();
-    uint32_t data = 0;
-
-    for (int i = 0; i < dst.width(); i++) {
-        data |= mem.read(address+i, &cycles) << (8*i);
-    }
+    uint32_t data = mem.read(address, &cycles);
 
     dst.setData(data);
 }
@@ -1081,9 +1072,12 @@ CPU::STR(Reg& dst, Reg& src) {
     const uint32_t address = dst.getData();
     const uint32_t data = src.getData();
 
-    for (int i = 0; i < src.width(); i++) {
-        mem.write(address+i, (data >> (8*i)) & 0xFF, &cycles);
-    }
+    uint32_t curr = mem.read(address, &cycles);
+    uint64_t mask = (1 << (8*src.width())) - 1;
+    curr &= (uint32_t) mask;
+    curr |= data;
+
+    mem.write(address, data, &cycles);
 }
 
 /******* LOAD/STORE INSTRUCTIONS *******/

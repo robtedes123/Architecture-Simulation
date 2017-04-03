@@ -28,7 +28,7 @@ class Cache
         };
 
         Cache(int numLines, int delay) :
-            OFFSET_BITS_LO(2),
+            OFFSET_BITS_LO(0),
             OFFSET_BITS_HI(OFFSET_BITS_LO + log2(WORDS_PER_LINE)),
             INDEX_BITS_LO(OFFSET_BITS_HI),
             INDEX_BITS_HI(INDEX_BITS_LO + log2(numLines)),
@@ -45,13 +45,6 @@ class Cache
         bool read(uint32_t address, Line* line);
         void write(uint32_t address, Line line);
 
-        const uint32_t DELAY;
-
-    private:
-        uint32_t BYTE(uint32_t address) {
-            return EB(address, 2, 0);
-        }
-
         uint32_t OFFSET(uint32_t address) {
             return EB(address, OFFSET_BITS_HI, OFFSET_BITS_LO);
         }
@@ -64,6 +57,9 @@ class Cache
             return EB(address, TAG_BITS_HI, TAG_BITS_LO);
         }
 
+        const uint32_t DELAY;
+
+    private:
         const int OFFSET_BITS_LO;
         const int OFFSET_BITS_HI;
         const int INDEX_BITS_LO;
@@ -79,10 +75,12 @@ class Memory
     public:
         void loadProgram(const vector<uint32_t>& program);
 
-        uint8_t read(uint32_t address, uint32_t* cycles);
-        void write(uint32_t address, uint8_t byte, uint32_t* cycles);
+        uint32_t read(uint32_t address, uint32_t* cycles);
+        void write(uint32_t address, uint32_t data, uint32_t* cycles);
 
     private:
+        Cache::Line readLine(uint32_t address, uint32_t* cycles);
+
         // RAM
         vector<uint32_t> ram = vector<uint32_t>(RAM_SIZE);
 

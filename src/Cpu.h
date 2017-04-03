@@ -13,10 +13,53 @@ class CPU {
     public:
         CPU(const vector<uint32_t>& program);
 
+        // Execute the program
         void run();
 
+        // Cycle Counter
         uint32_t cycles;
 
+        // Memory
+        Memory mem;
+
+        // Registers
+        union {
+            struct {
+                Reg r0;
+                Reg r1;
+                Reg r2;
+                Reg r3;
+                Reg r4;
+                Reg r5;
+                Reg r6;
+                Reg r7;
+                Reg r8;
+                Reg r9;
+                Reg r10;
+                Reg r11;
+                Reg r12;
+                Reg r13;
+                Reg r14;
+                Reg r15;
+                Reg r16;
+                Reg r17;
+                Reg r18;
+                Reg r19;
+                Reg r20;
+                Reg r21;
+                Reg r22;
+                Reg r23;
+                Reg r24;
+                Reg r25;
+                Reg r26;
+                Reg r27;
+                Reg LR;
+                Reg SP;
+                Reg FLAGS;
+                Reg PC;
+            };
+            Reg reg[32];
+        };
     private:
         uint32_t fetch();
         void execute(uint32_t instruction);
@@ -74,48 +117,6 @@ class CPU {
             UF = 6,
             CA = 7,
             DZ = 8,
-        };
-
-        // Memory
-        Memory mem;
-
-        // Registers
-        union {
-            struct {
-                Reg r0;
-                Reg r1;
-                Reg r2;
-                Reg r3;
-                Reg r4;
-                Reg r5;
-                Reg r6;
-                Reg r7;
-                Reg r8;
-                Reg r9;
-                Reg r10;
-                Reg r11;
-                Reg r12;
-                Reg r13;
-                Reg r14;
-                Reg r15;
-                Reg r16;
-                Reg r17;
-                Reg r18;
-                Reg r19;
-                Reg r20;
-                Reg r21;
-                Reg r22;
-                Reg r23;
-                Reg r24;
-                Reg r25;
-                Reg r26;
-                Reg r27;
-                Reg LR;
-                Reg SP;
-                Reg FLAGS;
-                Reg PC;
-            };
-            Reg reg[32];
         };
 };
 
