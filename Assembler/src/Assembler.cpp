@@ -1,5 +1,7 @@
 #include "Assembler.h"
 
+#include <regex>
+
 #include <cassert>
 #include <cstdio>
 
@@ -25,12 +27,14 @@ Assembler::~Assembler() {
 }
 
 void Assembler::parse() {
+    int num_lines = 0;
     // parse labels
     {
         int valid_lines = 0;
 
 	    string line;
 	    while(getline(file_in, line)) {
+            num_lines += 1;
             if (line.size() == 0)
                 continue;
 
@@ -50,11 +54,10 @@ void Assembler::parse() {
     file_in.clear();
     file_in.seekg(0, ios::beg);
 
-    // parse code
     string line;
-	while(getline(file_in, line)) {
-        cout << line << endl;
-        // increment line number
+    for (int i = 0; i < num_lines-1; i++) {
+	    getline(file_in, line);
+
         line_num += 1;
 
         const uint32_t instruction = parse_line(line);
@@ -63,7 +66,28 @@ void Assembler::parse() {
             continue;
 
         program.emplace_back(instruction);
-	}
+    }
+
+	getline(file_in, line);
+    int data_loc_start = line.find_first_not_of("{", 4);
+    int data_loc_end   = line.find_first_not_of("0123456789", data_loc_start);
+
+    int data_loc = stoi(line.substr(data_loc_start, data_loc_end)) / 4;
+
+    for (int i = program.size(); i < data_loc; i++) {
+        program.emplace_back(0);
+    }
+
+    int start = 0;
+    int end = data_loc_end;
+    while(true) {
+        start = line.find_first_of("0123456789", end);
+        if (start == string::npos) break;
+        end = line.find_first_not_of("0123456789", start);
+
+        string val = line.substr(start, end-1);
+        program.emplace_back(stoi(val));
+    }
 }
 
 void Assembler::write() {
