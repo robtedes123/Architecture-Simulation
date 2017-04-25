@@ -1,41 +1,41 @@
-    mov r0 512   // r0 = address of length
-    ldr 32 r1 r0 // r1 = length
-    sub r2 r1 1  // r2 = length - 1
-    mov r3 4     // r3 = data width
-    add r0 r0 r3 // r0 = data
+    mov r0 512   // r0 = address of length //0
+    ldr 32 r1 r0 // r1 = length            //4
+    sub r2 r1 1  // r2 = length - 1        //8
+    mov r3 4     // r3 = data width        //12
+    add r0 r0 r3 // r0 = data              //16
 
-    mov r16 0 // i = 0
+    mov r16 0 // i = 0                     //20
 outer:
-    cmp r16 r2 // i < (length - 1)
-    b eq outer_done
+    cmp r16 r2 // i < (length - 1)         //24
+    b eq outer_done                        //28
 
-    add r17 r16 1 // j = i+1
+    add r17 r16 1 // j = i+1               //32
 inner:
-    cmp r17 r1 // j < length
-    b eq inner_done
+    cmp r17 r1 // j < length               //36
+    b eq inner_done                        //40
 
-    mul r18 r16 r3 // r18 = i * 4
-    add r19 r18 r0 // r19 = num + (i * 4)
-    ldr 32 r18 r19    // r18 = *(array + (i * 4))
+    mul r18 r16 r3 // r18 = i * 4          //44
+    add r19 r18 r0 // r19 = num + (i * 4)  //48
+    ldr 32 r18 r19    // r18 = *(array + (i * 4))  //52
 
-    mul r20 r17 r3 // r20 = j * 4
-    add r21 r20 r0 // r21 = num + (j * 4)
-    ldr 32 r20 r21    // r20 = *(num + (j * 4))
+    mul r20 r17 r3 // r20 = j * 4          //56
+    add r21 r20 r0 // r21 = num + (j * 4)  //60
+    ldr 32 r20 r21    // r20 = *(num + (j * 4)) //64
 
-    cmp r18 r20    // num[i] < num[j]
-    b lt no_swap
-    b eq no_swap
+    cmp r18 r20    // num[i] < num[j]      //68
+    b lt no_swap                           //72
+    b eq no_swap                           //76
 
-    str r20 r19 // swap
-    str r18 r21 // swap
+    str r20 r19 // swap                    //80
+    str r18 r21 // swap                    //84
 no_swap:
-    add r17 r17 1
-    b al inner
+    add r17 r17 1                          //88
+    b al inner                             //92
 inner_done:
-    add r16 r16 1
-    b al outer
+    add r16 r16 1                          //96
+    b al outer                             //100
 
 outer_done:
-    hlt
+    hlt                                    //104
 
 DATA{512} 10 10 9 8 7 6 5 4 3 2 1

@@ -1,6 +1,7 @@
 #include "Mem.h"
 
 #include <cstdio>
+#include <iostream>
 
 #ifdef CACHE
 void

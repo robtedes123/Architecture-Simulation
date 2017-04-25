@@ -13,18 +13,11 @@ struct Reg {
             UNUSED  = 3,
         };
 
-        static Type chooseMaxWidth(Reg& arg1, Reg& arg2) {
-            int a1_size = (int)arg1.getType();
-            int a2_size = (int)arg2.getType();
-            int max_size = a1_size >= a2_size ? a1_size : a2_size;
-            return (Type) max_size;
-        }
-
-        static Type chooseMaxWidth(Reg& arg1, Type ti) {
-            int a1_size = (int)arg1.getType();
-            int a2_size = (int)ti;
-            int max_size = a1_size >= a2_size ? a1_size : a2_size;
-            return (Type) max_size;
+        static Reg zeroed() {
+            Reg reg;
+            reg.setType(Type::WIDTH32);
+            reg.setData(0);
+            return reg;
         }
 
         int width() const;
@@ -34,6 +27,20 @@ struct Reg {
 
         void setType(Type);
         void setData(uint32_t);
+
+        static Type chooseMaxWidth(Reg& arg1, Reg& arg2) {
+            int a1_size = (int)arg1.getType();
+            int a2_size = (int)arg2.getType();
+            int max_size = a1_size >= a2_size ? a1_size : a2_size;
+            return (Type) max_size;
+        }
+
+        static Type chooseMaxWidth(Reg& arg1, Type type) {
+            int a1_size = (int)arg1.getType();
+            int a2_size = (int)type;
+            int max_size = a1_size >= a2_size ? a1_size : a2_size;
+            return (Type) max_size;
+        }
 
     private:
         Type type;
